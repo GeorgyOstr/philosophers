@@ -59,6 +59,7 @@ void start_simulation(t_arguments args)
 	{
 		if (pthread_join(philosophers[i].thread_id, NULL) != 0)
 			error_exit(THREAD_ERROR_1);
+		i++;
 			
 	}
 	free(philosophers);
