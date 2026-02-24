@@ -6,7 +6,7 @@
 /*   By: gostroum <gostroum@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:16:18 by gostroum          #+#    #+#             */
-/*   Updated: 2026/02/24 18:42:54 by gostroum         ###   ########.fr       */
+/*   Updated: 2026/02/24 21:29:31 by gostroum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,10 @@ void	*routine(void *arg)
 
 typedef struct s_philo_info 
 {
-		pthread_t	thread_id;
-		int			thread_num;
+		pthread_t		thread_id;
+		int				thread_num;
+		pthread_mutex_t	*left_fork;
+		pthread_mutex_t	*right_fork;
 } t_philo_info;
 
 void *philosopher_routine(void *arg)
@@ -32,10 +34,22 @@ void *philosopher_routine(void *arg)
 		int	*action;
 		action = malloc(4);
 		philosopher = arg;
+		pthread_mutex_lock(philosopher->left_fork);	
+		pthread_mutex_lock(philosopher->right_fork);	
+		usleep(1000000);
 		printf("Thread %d: Started philosopher\n", philosopher->thread_num);
 
 		action[0] = 1;
+		pthread_mutex_unlock(philosopher->left_fork);	
+		pthread_mutex_unlock(philosopher->right_fork);	
 		return action;
+}
+
+int overflow(int i, int n)
+{
+		if (i < 0)
+			return (n - 1);
+		return (i);
 }
 
 void start_simulation(t_arguments args)
@@ -43,13 +57,23 @@ void start_simulation(t_arguments args)
 	int i;
 	
 	t_philo_info *philosophers;
+	pthread_mutex_t *forks;
 	philosophers = calloc(args.number_of_philosophers, sizeof(*philosophers));
 	if (philosophers == NULL)
 		error_exit(MALLOC_ERROR);
 	i = 0;
+	forks = calloc(args.number_of_philosophers, sizeof(*forks));
+	if (forks == NULL)
+		error_exit(MALLOC_ERROR);
+	pthread_mutex_init(forks + args.number_of_philosophers - 1, NULL);
 	while (i < args.number_of_philosophers)
 	{
 			philosophers[i].thread_num = i + 1;
+			if (i < args.number_of_philosophers - 1)
+				pthread_mutex_init(forks + i, NULL);
+			
+			philosophers[i].left_fork = forks + overflow(i - 1, args.number_of_philosophers);
+			philosophers[i].right_fork = forks + i;
 			if (pthread_create(&(philosophers[i].thread_id), NULL, &philosopher_routine, &(philosophers[i])) != 0)
 					error_exit(THREAD_ERROR);
 			i++;
