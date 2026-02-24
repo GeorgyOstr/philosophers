@@ -6,7 +6,7 @@
 /*   By: gostroum <gostroum@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:21:27 by gostroum          #+#    #+#             */
-/*   Updated: 2026/02/24 15:32:54 by gostroum         ###   ########.fr       */
+/*   Updated: 2026/02/24 15:49:14 by gostroum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ long	ft_atoi(char *str)
 	if (str[i] == '+' || str[i] == '-')
 	{
 		if (str[i] == '-')
-			sign = -1;
+			error_exit(ATOI_ERROR);
 		i++;
 	}
 	while (str[i] && i < 20)

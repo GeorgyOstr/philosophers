@@ -6,7 +6,7 @@
 /*   By: gostroum <gostroum@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:16:05 by gostroum          #+#    #+#             */
-/*   Updated: 2026/02/24 15:28:51 by gostroum         ###   ########.fr       */
+/*   Updated: 2026/02/24 18:42:29 by gostroum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 
 #define ARGUMENTS_ERROR	1
 #define ATOI_ERROR		2
+#define MALLOC_ERROR	3
+#define THREAD_ERROR	4
+#define THREAD_ERROR_1	5
 
 typedef struct s_arguments
 {
