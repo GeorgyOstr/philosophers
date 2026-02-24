@@ -6,19 +6,11 @@
 /*   By: gostroum <gostroum@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:16:18 by gostroum          #+#    #+#             */
-/*   Updated: 2026/02/24 21:29:31 by gostroum         ###   ########.fr       */
+/*   Updated: 2026/02/24 23:13:14 by gostroum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
-void	*routine(void *arg)
-{
-	write(1, "hi\n", 3);
-	usleep(1000000);
-}
-
-
 
 typedef struct s_philo_info 
 {
@@ -35,8 +27,9 @@ void *philosopher_routine(void *arg)
 		action = malloc(4);
 		philosopher = arg;
 		pthread_mutex_lock(philosopher->left_fork);	
+		usleep(100000);
 		pthread_mutex_lock(philosopher->right_fork);	
-		usleep(1000000);
+		usleep(100000);
 		printf("Thread %d: Started philosopher\n", philosopher->thread_num);
 
 		action[0] = 1;
@@ -71,9 +64,16 @@ void start_simulation(t_arguments args)
 			philosophers[i].thread_num = i + 1;
 			if (i < args.number_of_philosophers - 1)
 				pthread_mutex_init(forks + i, NULL);
-			
-			philosophers[i].left_fork = forks + overflow(i - 1, args.number_of_philosophers);
-			philosophers[i].right_fork = forks + i;
+			if (i == 0)
+			{
+				philosophers[i].right_fork = forks + overflow(i - 1, args.number_of_philosophers);
+				philosophers[i].left_fork = forks + i;
+			}
+			else
+			{
+				philosophers[i].left_fork = forks + overflow(i - 1, args.number_of_philosophers);
+				philosophers[i].right_fork = forks + i;
+			}
 			if (pthread_create(&(philosophers[i].thread_id), NULL, &philosopher_routine, &(philosophers[i])) != 0)
 					error_exit(THREAD_ERROR);
 			i++;
