@@ -16,6 +16,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <sys/time.h>
 
 # define ARGUMENTS_ERROR 1
 # define ATOI_ERROR 2
