@@ -37,6 +37,42 @@ int	overflow(int i, int n)
 	return (i);
 }
 
+void	inititialize_mutexes(pthread_mutex_t *mutexes, int n)
+{
+	int	i;
+
+	i = 0;
+	while (i < n)
+	{
+		pthread_mutex_init(mutexes + i, NULL);
+		i++;
+	}
+}
+
+void inititialize_philosophers(t_philo_info *philosophers, pthread_mutex_t *forks,
+		int n)
+{
+	int	i;
+
+	i = 0;
+	while (i < n)
+	{
+		philosophers[i].thread_num = i + 1;
+		if (i % 2 == 0)
+		{
+			philosophers[i].right_fork = forks + overflow(i - 1, n);
+			philosophers[i].left_fork = forks + i;
+		}
+		else
+		{
+			philosophers[i].left_fork = forks + overflow(i - 1, n);
+			philosophers[i].right_fork = forks + i;
+		}
+		i++;
+	}
+}
+
+
 void	start_simulation(t_arguments args)
 {
 	int				i;
@@ -46,28 +82,14 @@ void	start_simulation(t_arguments args)
 	philosophers = calloc(args.number_of_philosophers, sizeof(*philosophers));
 	if (philosophers == NULL)
 		error_exit(MALLOC_ERROR);
-	i = 0;
 	forks = calloc(args.number_of_philosophers, sizeof(*forks));
 	if (forks == NULL)
 		error_exit(MALLOC_ERROR);
-	pthread_mutex_init(forks + args.number_of_philosophers - 1, NULL);
+	inititialize_mutexes(forks, args.number_of_philosophers);
+	inititialize_philosophers(philosophers, forks, args.number_of_philosophers);
+	i = 0;
 	while (i < args.number_of_philosophers)
 	{
-		philosophers[i].thread_num = i + 1;
-		if (i < args.number_of_philosophers - 1)
-			pthread_mutex_init(forks + i, NULL);
-		if (i == 0)
-		{
-			philosophers[i].right_fork = forks + overflow(i - 1,
-					args.number_of_philosophers);
-			philosophers[i].left_fork = forks + i;
-		}
-		else
-		{
-			philosophers[i].left_fork = forks + overflow(i - 1,
-					args.number_of_philosophers);
-			philosophers[i].right_fork = forks + i;
-		}
 		if (pthread_create(&(philosophers[i].thread_id), NULL,
 				&philosopher_routine, &(philosophers[i])) != 0)
 			error_exit(THREAD_ERROR);
@@ -81,6 +103,7 @@ void	start_simulation(t_arguments args)
 		i++;
 	}
 	free(philosophers);
+	free(forks);
 }
 
 int	main(int argc, char **argv)

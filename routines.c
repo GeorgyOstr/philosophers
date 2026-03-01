@@ -15,7 +15,7 @@
 void	eat_routine(t_philo_info *philosopher)
 {
 	pthread_mutex_lock(philosopher->left_fork);
-	pthread_mutex_lock(philosopher->right_fork);
+    pthread_mutex_lock(philosopher->right_fork);
 	printf("Thread %d: Started philosopher\n", philosopher->thread_num);
 	pthread_mutex_unlock(philosopher->left_fork);
 	pthread_mutex_unlock(philosopher->right_fork);
