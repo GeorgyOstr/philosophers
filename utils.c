@@ -14,13 +14,13 @@
 
 void	error_exit(int err_num)
 {
-	char c;
+	char	c;
 
 	c = '0' + err_num;
 	write(1, "Error ", 6);
 	write(1, &c, 1);
 	write(1, "\n", 1);
-	exit (err_num);
+	exit(err_num);
 }
 
 size_t	ft_strlen(char *str)
@@ -37,10 +37,8 @@ long	ft_atoi(char *str)
 {
 	int			i;
 	long		ans;
-	int			sign;
 	const int	len = ft_strlen(str);
 
-	sign = 1;
 	i = 0;
 	ans = 0;
 	if (len == 20 || len == 0)
@@ -58,5 +56,7 @@ long	ft_atoi(char *str)
 		ans = 10 * ans + (str[i] - '0');
 		i++;
 	}
-	return (ans * sign);
+	if (ans <= 0)
+		error_exit(ATOI_ERROR);
+	return (ans);
 }
