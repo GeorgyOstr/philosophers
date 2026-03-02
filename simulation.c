@@ -54,6 +54,8 @@ void	initialize_philosophers(t_philo_info *philosophers,
 	while (i < args->number_of_philosophers)
 	{
 		philosophers[i].args = args;
+		philosophers[i].eat_count = 0;
+		philosophers[i].last_ate_time = get_time();
 		{
 			philosophers[i].thread_num = i + 1;
 			if (i % 2 == 0)
