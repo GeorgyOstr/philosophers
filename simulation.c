@@ -19,19 +19,20 @@ int	overflow(int i, int n)
 	return (i);
 }
 
-void	inititialize_mutexes(pthread_mutex_t *mutexes, int n)
+void	initialize_mutexes(pthread_mutex_t *mutexes, t_arguments *args)
 {
 	int	i;
 
+	pthread_mutex_init(args->finished_eating, NULL);
 	i = 0;
-	while (i < n)
+	while (i < args->number_of_philosophers)
 	{
 		pthread_mutex_init(mutexes + i, NULL);
 		i++;
 	}
 }
 
-void	inititialize_philosophers(t_philo_info *philosophers,
+void	initialize_philosophers(t_philo_info *philosophers,
 		pthread_mutex_t *forks, t_arguments *args)
 {
 	int	i;
