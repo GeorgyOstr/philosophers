@@ -92,9 +92,9 @@ void	start_simulation(t_arguments *args)
 	initialize_monitor(args, philosophers);
 	create_threads(philosophers);
 	join_threads(philosophers);
+	destroy_mutexes(forks, args);
 	free(philosophers);
 	free(forks);
-	destroy_mutexes(forks, args);
 }
 
 int	main(int argc, char **argv)
