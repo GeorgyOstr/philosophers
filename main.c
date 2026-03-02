@@ -33,9 +33,12 @@ void	*philosopher_routine(void *arg)
 	t_philo_info	*philosopher;
 
 	philosopher = arg;
-	think_routine(philosopher);
-	eat_routine(philosopher);
-	sleep_routine(philosopher);
+	while (get_time() - philosopher->last_ate_time < philosopher->args->time_to_die)
+	{
+		think_routine(philosopher);
+		eat_routine(philosopher);
+		sleep_routine(philosopher);
+	}
 	return (arg);
 }
 
@@ -75,6 +78,7 @@ void	start_simulation(t_arguments *args)
 	int				i;
 	t_philo_info	*philosophers;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	finished_eating;
 
 	philosophers = calloc(args->number_of_philosophers, sizeof(*philosophers));
 	if (philosophers == NULL)
@@ -82,6 +86,7 @@ void	start_simulation(t_arguments *args)
 	forks = calloc(args->number_of_philosophers, sizeof(*forks));
 	if (forks == NULL)
 		error_exit(MALLOC_ERROR);
+	args->finished_eating = &finished_eating;
 	initialize_mutexes(forks, args);
 	initialize_philosophers(philosophers, forks, args);
 	initialize_monitor(args, philosophers);
@@ -89,6 +94,7 @@ void	start_simulation(t_arguments *args)
 	join_threads(philosophers);
 	free(philosophers);
 	free(forks);
+	destroy_mutexes(forks, args);
 }
 
 int	main(int argc, char **argv)

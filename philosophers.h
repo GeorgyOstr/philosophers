@@ -69,6 +69,7 @@ void				*monitor_routine(void *arg);
 
 void				initialize_mutexes(pthread_mutex_t *mutexes,
 						t_arguments *args);
+void				destroy_mutexes(pthread_mutex_t *mutexes, t_arguments *args);
 void				initialize_philosophers(t_philo_info *philosophers,
 						pthread_mutex_t *forks, t_arguments *args);
 void				create_threads(t_philo_info *philosophers);
