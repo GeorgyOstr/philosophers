@@ -32,34 +32,39 @@ void	inititialize_mutexes(pthread_mutex_t *mutexes, int n)
 }
 
 void	inititialize_philosophers(t_philo_info *philosophers,
-		pthread_mutex_t *forks, int n)
+		pthread_mutex_t *forks, t_arguments *args)
 {
 	int	i;
 
 	i = 0;
-	while (i < n)
+	while (i < args->number_of_philosophers)
 	{
-		philosophers[i].thread_num = i + 1;
-		if (i % 2 == 0)
+		philosophers[i].args = args;
 		{
-			philosophers[i].right_fork = forks + overflow(i - 1, n);
-			philosophers[i].left_fork = forks + i;
+			philosophers[i].thread_num = i + 1;
+			if (i % 2 == 0)
+			{
+				philosophers[i].right_fork = forks + overflow(i - 1,
+						args->number_of_philosophers);
+				philosophers[i].left_fork = forks + i;
+			}
+			else
+			{
+				philosophers[i].left_fork = forks + overflow(i - 1,
+						args->number_of_philosophers);
+				philosophers[i].right_fork = forks + i;
+			}
+			i++;
 		}
-		else
-		{
-			philosophers[i].left_fork = forks + overflow(i - 1, n);
-			philosophers[i].right_fork = forks + i;
-		}
-		i++;
 	}
 }
 
-void	create_threads(t_philo_info *philosophers, int n)
+void	create_threads(t_philo_info *philosophers)
 {
 	int	i;
 
 	i = 0;
-	while (i < n)
+	while (i < philosophers[0].args->number_of_philosophers)
 	{
 		if (pthread_create(&(philosophers[i].thread_id), NULL,
 				&philosopher_routine, &(philosophers[i])) != 0)
@@ -68,12 +73,12 @@ void	create_threads(t_philo_info *philosophers, int n)
 	}
 }
 
-void	join_threads(t_philo_info *philosophers, int n)
+void	join_threads(t_philo_info *philosophers)
 {
 	int	i;
 
 	i = 0;
-	while (i < n)
+	while (i < philosophers[0].args->number_of_philosophers)
 	{
 		if (pthread_join(philosophers[i].thread_id, NULL) != 0)
 			error_exit(THREAD_ERROR_1);

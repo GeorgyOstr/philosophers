@@ -15,14 +15,12 @@
 void	*philosopher_routine(void *arg)
 {
 	t_philo_info	*philosopher;
-	int				*action;
 
-	action = malloc(4);
 	philosopher = arg;
 	think_routine(philosopher);
 	eat_routine(philosopher);
 	sleep_routine(philosopher);
-	return (action);
+	return (arg);
 }
 
 void	*monitor_routine(void *arg)
@@ -30,22 +28,22 @@ void	*monitor_routine(void *arg)
 	return (NULL);
 }
 
-void	start_simulation(t_arguments args)
+void	start_simulation(t_arguments *args)
 {
 	int				i;
 	t_philo_info	*philosophers;
 	pthread_mutex_t	*forks;
 
-	philosophers = calloc(args.number_of_philosophers, sizeof(*philosophers));
+	philosophers = calloc(args->number_of_philosophers, sizeof(*philosophers));
 	if (philosophers == NULL)
 		error_exit(MALLOC_ERROR);
-	forks = calloc(args.number_of_philosophers, sizeof(*forks));
+	forks = calloc(args->number_of_philosophers, sizeof(*forks));
 	if (forks == NULL)
 		error_exit(MALLOC_ERROR);
-	inititialize_mutexes(forks, args.number_of_philosophers);
-	inititialize_philosophers(philosophers, forks, args.number_of_philosophers);
-	create_threads(philosophers, args.number_of_philosophers);
-	join_threads(philosophers, args.number_of_philosophers);
+	inititialize_mutexes(forks, args->number_of_philosophers);
+	inititialize_philosophers(philosophers, forks, args);
+	create_threads(philosophers);
+	join_threads(philosophers);
 	free(philosophers);
 	free(forks);
 }
@@ -68,6 +66,6 @@ int	main(int argc, char **argv)
 	{
 		error_exit(ARGUMENTS_ERROR);
 	}
-	start_simulation(args);
+	start_simulation(&args);
 	return (0);
 }

@@ -34,6 +34,7 @@ void	eat_routine(t_philo_info *philosopher)
 void	sleep_routine(t_philo_info *philosopher)
 {
 	printf("%ld %d is sleeping\n", get_time(), philosopher->thread_num);
+	usleep(1000);
 }
 
 void	think_routine(t_philo_info *philosopher)

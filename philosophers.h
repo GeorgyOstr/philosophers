@@ -39,6 +39,7 @@ typedef struct s_philo_info
 	int				thread_num;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
+	t_arguments		*args;
 }					t_philo_info;
 
 void				error_exit(int err_num);
@@ -51,12 +52,12 @@ void				think_routine(t_philo_info *philosopher);
 
 void				*philosopher_routine(void *arg);
 void				*monitor_routine(void *arg);
-void				start_simulation(t_arguments args);
+void				start_simulation(t_arguments *args);
 
 void				inititialize_mutexes(pthread_mutex_t *mutexes, int n);
 void				inititialize_philosophers(t_philo_info *philosophers,
-						pthread_mutex_t *forks, int n);
-void				create_threads(t_philo_info *philosophers, int n);
-void				join_threads(t_philo_info *philosophers, int n);
+						pthread_mutex_t *forks, t_arguments *args);
+void				create_threads(t_philo_info *philosophers);
+void				join_threads(t_philo_info *philosophers);
 
 #endif
