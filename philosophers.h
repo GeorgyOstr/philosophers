@@ -31,7 +31,11 @@ typedef struct s_arguments
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				number_of_eat_to_finish;
+	long			start_time;
+	int				stop;
 	pthread_mutex_t	*finished_eating;
+	pthread_mutex_t	*stop_mutex;
+	pthread_mutex_t	*print_mutex;
 }					t_arguments;
 
 typedef struct s_philo_info
@@ -54,6 +58,11 @@ void				error_exit(int err_num);
 size_t				ft_strlen(char *str);
 long				ft_atoi(char *str);
 long				get_time(void);
+long				timestamp_ms(t_arguments *args);
+void				precise_sleep(long duration_ms, t_arguments *args);
+int					should_stop(t_arguments *args);
+void				set_stop(t_arguments *args, int value);
+void				print_status(t_philo_info *philosopher, char *status);
 
 void				eat_routine(t_philo_info *philosopher);
 void				sleep_routine(t_philo_info *philosopher);
@@ -64,11 +73,11 @@ void				*monitor_routine(void *arg);
 void				start_simulation(t_arguments *args);
 
 void				initialize_monitor(t_arguments *args,
-						t_philo_info *philosophers);
-void				*monitor_routine(void *arg);
+							t_philo_info *philosophers,
+							pthread_t *monitor_thread, t_all *all);
 
 void				initialize_mutexes(pthread_mutex_t *mutexes,
-						t_arguments *args);
+							t_arguments *args);
 void				destroy_mutexes(pthread_mutex_t *mutexes, t_arguments *args);
 void				initialize_philosophers(t_philo_info *philosophers,
 						pthread_mutex_t *forks, t_arguments *args);

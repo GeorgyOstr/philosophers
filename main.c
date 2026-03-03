@@ -33,52 +33,87 @@ void	*philosopher_routine(void *arg)
 	t_philo_info	*philosopher;
 
 	philosopher = arg;
-	while (get_time() - philosopher->last_ate_time < philosopher->args->time_to_die)
+	if (philosopher->thread_num % 2 == 0)
+		usleep(500);
+	while (!should_stop(philosopher->args))
 	{
-		think_routine(philosopher);
 		eat_routine(philosopher);
+		if (should_stop(philosopher->args))
+			break ;
 		sleep_routine(philosopher);
+		if (should_stop(philosopher->args))
+			break ;
+		think_routine(philosopher);
 	}
-	return (arg);
+	return (NULL);
 }
 
 void	*monitor_routine(void *arg)
 {
 	t_all	*args_and_philosophers;
+	int		i;
 
 	args_and_philosophers = arg;
-	while (1)
+	while (!should_stop(args_and_philosophers->args))
 	{
-		pthread_mutex_lock(args_and_philosophers->args->finished_eating);
-		if (min_eat_amount(args_and_philosophers->philosophers) == args_and_philosophers->args->number_of_eat_to_finish)
+		i = 0;
+		while (i < args_and_philosophers->args->number_of_philosophers)
 		{
+			pthread_mutex_lock(args_and_philosophers->args->finished_eating);
+			if (get_time() - args_and_philosophers->philosophers[i].last_ate_time
+				> args_and_philosophers->args->time_to_die)
+			{
+				pthread_mutex_unlock(args_and_philosophers->args->finished_eating);
+				if (should_stop(args_and_philosophers->args))
+					return (NULL);
+				set_stop(args_and_philosophers->args, 1);
+				pthread_mutex_lock(args_and_philosophers->args->print_mutex);
+				printf("%ld %d died\n", timestamp_ms(args_and_philosophers->args),
+					args_and_philosophers->philosophers[i].thread_num);
+				pthread_mutex_unlock(args_and_philosophers->args->print_mutex);
+				return (NULL);
+			}
+			pthread_mutex_unlock(args_and_philosophers->args->finished_eating);
+			i++;
+		}
+		pthread_mutex_lock(args_and_philosophers->args->finished_eating);
+		if (args_and_philosophers->args->number_of_eat_to_finish > 0
+			&& min_eat_amount(args_and_philosophers->philosophers)
+			>= args_and_philosophers->args->number_of_eat_to_finish)
+		{
+			pthread_mutex_unlock(args_and_philosophers->args->finished_eating);
+			set_stop(args_and_philosophers->args, 1);
+			pthread_mutex_lock(args_and_philosophers->args->print_mutex);
 			printf("%ld All philosophers have eaten at least %d times.\n",
-				get_time(),
+				timestamp_ms(args_and_philosophers->args),
 				args_and_philosophers->args->number_of_eat_to_finish);
-			exit(0);
+			pthread_mutex_unlock(args_and_philosophers->args->print_mutex);
+			return (NULL);
 		}
 		pthread_mutex_unlock(args_and_philosophers->args->finished_eating);
+		usleep(1000);
 	}
-	return (arg);
+	return (NULL);
 }
 
-void	initialize_monitor(t_arguments *args, t_philo_info *philosophers)
+void	initialize_monitor(t_arguments *args, t_philo_info *philosophers,
+	pthread_t *monitor_thread, t_all *all)
 {
-	pthread_t	monitor_thread;
-	t_all		all;
-
-	all.args = args;
-	all.philosophers = philosophers;
-	pthread_create(&monitor_thread, NULL, monitor_routine, &all);
-	pthread_detach(monitor_thread);
+	all->args = args;
+	all->philosophers = philosophers;
+	if (pthread_create(monitor_thread, NULL, monitor_routine, all) != 0)
+		error_exit(THREAD_ERROR);
 }
 
 void	start_simulation(t_arguments *args)
 {
-	int				i;
 	t_philo_info	*philosophers;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	finished_eating;
+	pthread_mutex_t	stop_mutex;
+	pthread_mutex_t	print_mutex;
+	pthread_t		monitor_thread;
+	t_all			all;
 
 	philosophers = calloc(args->number_of_philosophers, sizeof(*philosophers));
 	if (philosophers == NULL)
@@ -86,11 +121,17 @@ void	start_simulation(t_arguments *args)
 	forks = calloc(args->number_of_philosophers, sizeof(*forks));
 	if (forks == NULL)
 		error_exit(MALLOC_ERROR);
+	args->start_time = get_time();
+	args->stop = 0;
 	args->finished_eating = &finished_eating;
+	args->stop_mutex = &stop_mutex;
+	args->print_mutex = &print_mutex;
 	initialize_mutexes(forks, args);
 	initialize_philosophers(philosophers, forks, args);
-	initialize_monitor(args, philosophers);
+	initialize_monitor(args, philosophers, &monitor_thread, &all);
 	create_threads(philosophers);
+	if (pthread_join(monitor_thread, NULL) != 0)
+		error_exit(THREAD_ERROR_1);
 	join_threads(philosophers);
 	destroy_mutexes(forks, args);
 	free(philosophers);

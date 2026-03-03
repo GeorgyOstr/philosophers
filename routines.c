@@ -20,25 +20,70 @@ long	get_time(void)
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-void death_exit(t_philo_info *philosopher)
+long	timestamp_ms(t_arguments *args)
 {
-	printf("%ld %d died\n", get_time(), philosopher->thread_num);
-	exit(0);
+	return (get_time() - args->start_time);
+}
+
+int	should_stop(t_arguments *args)
+{
+	int	stop;
+
+	pthread_mutex_lock(args->stop_mutex);
+	stop = args->stop;
+	pthread_mutex_unlock(args->stop_mutex);
+	return (stop);
+}
+
+void	set_stop(t_arguments *args, int value)
+{
+	pthread_mutex_lock(args->stop_mutex);
+	args->stop = value;
+	pthread_mutex_unlock(args->stop_mutex);
+}
+
+void	print_status(t_philo_info *philosopher, char *status)
+{
+	pthread_mutex_lock(philosopher->args->print_mutex);
+	if (!should_stop(philosopher->args))
+		printf("%ld %d %s\n", timestamp_ms(philosopher->args),
+			philosopher->thread_num, status);
+	pthread_mutex_unlock(philosopher->args->print_mutex);
+}
+
+void	precise_sleep(long duration_ms, t_arguments *args)
+{
+	long	start;
+
+	start = get_time();
+	while (!should_stop(args) && get_time() - start < duration_ms)
+		usleep(200);
 }
 
 void	eat_routine(t_philo_info *philosopher)
 {
+	if (should_stop(philosopher->args))
+		return ;
 	pthread_mutex_lock(philosopher->left_fork);
-	printf("%ld %d has taken a fork\n", get_time(), philosopher->thread_num);
+	print_status(philosopher, "has taken a fork");
+	if (philosopher->args->number_of_philosophers == 1)
+	{
+		precise_sleep(philosopher->args->time_to_die, philosopher->args);
+		set_stop(philosopher->args, 1);
+		pthread_mutex_lock(philosopher->args->print_mutex);
+		printf("%ld %d died\n", timestamp_ms(philosopher->args),
+			philosopher->thread_num);
+		pthread_mutex_unlock(philosopher->args->print_mutex);
+		pthread_mutex_unlock(philosopher->left_fork);
+		return ;
+	}
 	pthread_mutex_lock(philosopher->right_fork);
-	printf("%ld %d has taken a fork\n", get_time(), philosopher->thread_num);
-	printf("%ld %d is eating\n", get_time(), philosopher->thread_num);
+	print_status(philosopher, "has taken a fork");
+	print_status(philosopher, "is eating");
+	pthread_mutex_lock(philosopher->args->finished_eating);
 	philosopher->last_ate_time = get_time();
-	while (get_time() - philosopher->last_ate_time < philosopher->args->time_to_die 
-			&& get_time() - philosopher->last_ate_time < philosopher->args->time_to_eat)
-		;
-	if (get_time() - philosopher->last_ate_time >= philosopher->args->time_to_die)
-		death_exit(philosopher);
+	pthread_mutex_unlock(philosopher->args->finished_eating);
+	precise_sleep(philosopher->args->time_to_eat, philosopher->args);
 	pthread_mutex_lock(philosopher->args->finished_eating);
 	philosopher->eat_count++;
 	pthread_mutex_unlock(philosopher->args->finished_eating);
@@ -48,13 +93,11 @@ void	eat_routine(t_philo_info *philosopher)
 
 void	sleep_routine(t_philo_info *philosopher)
 {
-	printf("%ld %d is sleeping\n", get_time(), philosopher->thread_num);
-	while (get_time() - philosopher->last_ate_time < philosopher->args->time_to_die 
-			&& get_time() - philosopher->last_ate_time < philosopher->args->time_to_sleep)
-		;
+	print_status(philosopher, "is sleeping");
+	precise_sleep(philosopher->args->time_to_sleep, philosopher->args);
 }
 
 void	think_routine(t_philo_info *philosopher)
 {
-	printf("%ld %d is thinking\n", get_time(), philosopher->thread_num);
+	print_status(philosopher, "is thinking");
 }
