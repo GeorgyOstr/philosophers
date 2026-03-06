@@ -51,9 +51,10 @@ void	*monitor_routine(void *arg)
 	t_monitor_info	*monitor_info;
 
 	monitor_info = arg;
+	pthread_mutex_lock(monitor_info->args->finish_mutex);
 	while (!monitor_info->args->finish_flag)
 	{
-		pthread_mutex_lock(monitor_info->args->finished_eating);
+		pthread_mutex_lock(monitor_info->args->meal_mutex);
 		if (min_eat_amount(monitor_info->philosophers) == monitor_info->args->number_of_eat_to_finish)
 		{
 			pthread_mutex_lock(monitor_info->args->write_mutex);
@@ -64,8 +65,9 @@ void	*monitor_routine(void *arg)
 			monitor_info->args->finish_flag = 1;
 			pthread_mutex_unlock(monitor_info->args->write_mutex);
 		}
-		pthread_mutex_unlock(monitor_info->args->finished_eating);
+		pthread_mutex_unlock(monitor_info->args->meal_mutex);
 	}
+	pthread_mutex_unlock(monitor_info->args->finish_mutex);
 	return (arg);
 }
 
@@ -81,24 +83,26 @@ void	freeall(t_philo_info *philosophers, pthread_mutex_t *forks, t_arguments *ar
 {
 	int	i;
 
-	free(philosophers);
-	free(forks);
-	pthread_mutex_destroy(args->finished_eating);
+	pthread_mutex_destroy(args->meal_mutex);
 	pthread_mutex_destroy(args->write_mutex);
+	pthread_mutex_destroy(args->finish_mutex);
 	i = 0;
 	while (i < args->number_of_philosophers)
 	{
 		pthread_mutex_destroy(forks + i);
 		i++;
 	}
+	free(philosophers);
+	free(forks);
 }
 
 void	start_simulation(t_arguments *args)
 {
 	t_philo_info	*philosophers;
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	finished_eating;
+	pthread_mutex_t	meal_mutex;
 	pthread_mutex_t	write_mutex;
+	pthread_mutex_t	finish_mutex;
 	t_monitor_info	monitor_info;
 
 	philosophers = calloc(args->number_of_philosophers, sizeof(*philosophers));
@@ -107,8 +111,9 @@ void	start_simulation(t_arguments *args)
 	forks = calloc(args->number_of_philosophers, sizeof(*forks));
 	if (forks == NULL)
 		error_exit(MALLOC_ERROR);
-	args->finished_eating = &finished_eating;
+	args->meal_mutex = &meal_mutex;
 	args->write_mutex = &write_mutex;
+	args->finish_mutex = &finish_mutex;
 	initialize_mutexes(forks, args);
 	initialize_philosophers(philosophers, forks, args);
 	initialize_monitor(&monitor_info, args, philosophers);

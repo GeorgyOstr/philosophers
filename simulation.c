@@ -23,8 +23,10 @@ void	initialize_mutexes(pthread_mutex_t *mutexes, t_arguments *args)
 {
 	int	i;
 
-	pthread_mutex_init(args->finished_eating, NULL);
+	pthread_mutex_init(args->meal_mutex, NULL);
 	pthread_mutex_init(args->write_mutex, NULL);
+	pthread_mutex_init(args->finish_mutex, NULL);
+	
 	i = 0;
 	while (i < args->number_of_philosophers)
 	{

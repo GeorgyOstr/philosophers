@@ -40,8 +40,9 @@ typedef struct s_arguments
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				number_of_eat_to_finish;
-	pthread_mutex_t	*finished_eating;
+	pthread_mutex_t	*meal_mutex;
 	pthread_mutex_t	*write_mutex;
+	pthread_mutex_t	*finish_mutex;
 	int				finish_flag;
 }					t_arguments;
 

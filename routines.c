@@ -30,6 +30,12 @@ void	eat_routine(t_philo_info *philosopher)
 {
 	pthread_mutex_lock(philosopher->left_fork);
 	print_status(philosopher, TAKEN_FORK);
+	if (philosopher->args->number_of_philosophers == 1)
+	{
+		while (get_time() - philosopher->last_ate_time < philosopher->args->time_to_die)
+			;
+		death_exit(philosopher);
+	}
 	pthread_mutex_lock(philosopher->right_fork);
 	print_status(philosopher, TAKEN_FORK);
 	print_status(philosopher, EATING);
@@ -42,9 +48,9 @@ void	eat_routine(t_philo_info *philosopher)
 	if (get_time()
 		- philosopher->last_ate_time >= philosopher->args->time_to_die)
 		death_exit(philosopher);
-	pthread_mutex_lock(philosopher->args->finished_eating);
+	pthread_mutex_lock(philosopher->args->meal_mutex);
 	philosopher->eat_count++;
-	pthread_mutex_unlock(philosopher->args->finished_eating);
+	pthread_mutex_unlock(philosopher->args->meal_mutex);
 	pthread_mutex_unlock(philosopher->left_fork);
 	pthread_mutex_unlock(philosopher->right_fork);
 }
