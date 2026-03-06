@@ -38,7 +38,7 @@ void	*philosopher_routine(void *arg)
 	pthread_mutex_lock(philosopher->args->finish_mutex);
 	while (!philosopher->args->finish_flag)
 	{
-		pthread_mutex_unlock(philosopher->args->finish_mutex);	
+		pthread_mutex_unlock(philosopher->args->finish_mutex);
 		think_routine(philosopher);
 		eat_routine(philosopher);
 		sleep_routine(philosopher);
@@ -69,55 +69,14 @@ void	*monitor_routine(void *arg)
 	return (arg);
 }
 
-void	initialize_monitor(t_monitor_info *monitor_info, t_arguments *args, t_philo_info *philosophers)
+void	initialize_monitor(t_monitor_info *monitor_info, t_arguments *args,
+		t_philo_info *philosophers)
 {
 	monitor_info->args = args;
 	monitor_info->philosophers = philosophers;
 	monitor_info->args->finish_flag = 0;
-	pthread_create(&monitor_info->thread_id, NULL, monitor_routine, monitor_info);
-}
-
-void	freeall(t_philo_info *philosophers, pthread_mutex_t *forks, t_arguments *args)
-{
-	int	i;
-
-	pthread_mutex_destroy(args->meal_mutex);
-	pthread_mutex_destroy(args->write_mutex);
-	pthread_mutex_destroy(args->finish_mutex);
-	i = 0;
-	while (i < args->number_of_philosophers)
-	{
-		pthread_mutex_destroy(forks + i);
-		i++;
-	}
-	free(philosophers);
-	free(forks);
-}
-
-void	start_simulation(t_arguments *args)
-{
-	t_philo_info	*philosophers;
-	pthread_mutex_t	*forks;
-	pthread_mutex_t	meal_mutex;
-	pthread_mutex_t	write_mutex;
-	pthread_mutex_t	finish_mutex;
-	t_monitor_info	monitor_info;
-
-	philosophers = calloc(args->number_of_philosophers, sizeof(*philosophers));
-	if (philosophers == NULL)
-		error_exit(MALLOC_ERROR);
-	forks = calloc(args->number_of_philosophers, sizeof(*forks));
-	if (forks == NULL)
-		error_exit(MALLOC_ERROR);
-	args->meal_mutex = &meal_mutex;
-	args->write_mutex = &write_mutex;
-	args->finish_mutex = &finish_mutex;
-	initialize_mutexes(forks, args);
-	initialize_philosophers(philosophers, forks, args);
-	initialize_monitor(&monitor_info, args, philosophers);
-	create_threads(philosophers);
-	join_threads(philosophers, &monitor_info);
-	freeall(philosophers, forks, args);
+	pthread_create(&monitor_info->thread_id, NULL, monitor_routine,
+		monitor_info);
 }
 
 int	main(int argc, char **argv)

@@ -12,27 +12,14 @@
 
 #include "philosophers.h"
 
-long	get_time(void)
-{
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
-}
-
-void	death_exit(t_philo_info *philosopher)
-{
-	print_status(philosopher, DIED);
-	exit(0);
-}
-
 void	eat_routine(t_philo_info *philosopher)
 {
 	pthread_mutex_lock(philosopher->left_fork);
 	print_status(philosopher, TAKEN_FORK);
 	if (philosopher->args->number_of_philosophers == 1)
 	{
-		while (get_time() - philosopher->last_ate_time < philosopher->args->time_to_die)
+		while (get_time()
+			- philosopher->last_ate_time < philosopher->args->time_to_die)
 			;
 		print_status(philosopher, DIED);
 	}
@@ -58,11 +45,18 @@ void	eat_routine(t_philo_info *philosopher)
 void	sleep_routine(t_philo_info *philosopher)
 {
 	print_status(philosopher, SLEEPING);
-	while (get_time() - philosopher->last_ate_time < philosopher->args->time_to_die
-		&& get_time() - philosopher->last_ate_time < philosopher->args->time_to_sleep)
+	while (get_time()
+		- philosopher->last_ate_time < philosopher->args->time_to_die
+		&& get_time()
+		- philosopher->last_ate_time < philosopher->args->time_to_sleep)
 		;
-	if (get_time() - philosopher->last_ate_time >= philosopher->args->time_to_die)
-		death_exit(philosopher);
+	if (get_time()
+		- philosopher->last_ate_time >= philosopher->args->time_to_die)
+	{
+		pthread_mutex_lock(philosopher->args->finish_mutex);
+		philosopher->args->finish_flag += 1;
+		pthread_mutex_unlock(philosopher->args->finish_mutex);
+	}
 }
 
 void	think_routine(t_philo_info *philosopher)
@@ -70,9 +64,16 @@ void	think_routine(t_philo_info *philosopher)
 	print_status(philosopher, THINKING);
 	if (philosopher->eat_count >= philosopher->args->number_of_eat_to_finish)
 	{
-		if (get_time() - philosopher->last_ate_time >= philosopher->args->time_to_die)
-			death_exit(philosopher);
+		if (get_time()
+			- philosopher->last_ate_time >= philosopher->args->time_to_die)
+		{
+			pthread_mutex_lock(philosopher->args->finish_mutex);
+			philosopher->args->finish_flag += 1;
+			pthread_mutex_unlock(philosopher->args->finish_mutex);
+		}
 		else
-			usleep((philosopher->args->time_to_die - (get_time() - philosopher->last_ate_time)) * 1000 / philosopher->args->number_of_philosophers);
+			usleep((philosopher->args->time_to_die - (get_time()
+						- philosopher->last_ate_time)) * 1000
+				/ philosopher->args->number_of_philosophers);
 	}
 }

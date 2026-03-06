@@ -76,8 +76,8 @@ void				think_routine(t_philo_info *philosopher);
 void				*philosopher_routine(void *arg);
 void				start_simulation(t_arguments *args);
 
-void				initialize_monitor(t_monitor_info *monitor_info, t_arguments *args,
-						t_philo_info *philosophers);
+void				initialize_monitor(t_monitor_info *monitor_info,
+						t_arguments *args, t_philo_info *philosophers);
 void				*monitor_routine(void *arg);
 
 void				initialize_mutexes(pthread_mutex_t *mutexes,
@@ -87,7 +87,8 @@ void				destroy_mutexes(pthread_mutex_t *mutexes,
 void				initialize_philosophers(t_philo_info *philosophers,
 						pthread_mutex_t *forks, t_arguments *args);
 void				create_threads(t_philo_info *philosophers);
-void				join_threads(t_philo_info *philosophers, t_monitor_info *monitor_info);
+void				join_threads(t_philo_info *philosophers,
+						t_monitor_info *monitor_info);
 int					min_eat_amount(t_philo_info *philosophers);
 
 void				print_status(t_philo_info *philosopher, int status);
