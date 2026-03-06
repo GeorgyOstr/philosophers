@@ -42,7 +42,7 @@ typedef struct s_arguments
 	int				number_of_eat_to_finish;
 	pthread_mutex_t	*finished_eating;
 	pthread_mutex_t	*write_mutex;
-
+	int				finish_flag;
 }					t_arguments;
 
 typedef struct s_philo_info

@@ -33,6 +33,8 @@ void	*philosopher_routine(void *arg)
 	t_philo_info	*philosopher;
 
 	philosopher = arg;
+	if (philosopher->last_ate_time == 0)
+		philosopher->last_ate_time = get_time();
 	while (get_time()
 		- philosopher->last_ate_time < philosopher->args->time_to_die)
 	{
@@ -40,6 +42,7 @@ void	*philosopher_routine(void *arg)
 		eat_routine(philosopher);
 		sleep_routine(philosopher);
 	}
+	philosopher->args->finish_flag = 1;
 	return (arg);
 }
 
@@ -48,16 +51,18 @@ void	*monitor_routine(void *arg)
 	t_monitor_info	*monitor_info;
 
 	monitor_info = arg;
-	while (1)
+	while (!monitor_info->args->finish_flag)
 	{
 		pthread_mutex_lock(monitor_info->args->finished_eating);
 		if (min_eat_amount(monitor_info->philosophers) == monitor_info->args->number_of_eat_to_finish)
 		{
 			pthread_mutex_lock(monitor_info->args->write_mutex);
-			printf("%ld All philosophers have eaten at least %d times.\n",
-				get_time(),
-				monitor_info->args->number_of_eat_to_finish);
-			exit(0);
+			if (!monitor_info->args->finish_flag)
+				printf("%ld All philosophers have eaten at least %d times.\n",
+					get_time(), monitor_info->args->number_of_eat_to_finish);
+				exit(0);
+			monitor_info->args->finish_flag = 1;
+			pthread_mutex_unlock(monitor_info->args->write_mutex);
 		}
 		pthread_mutex_unlock(monitor_info->args->finished_eating);
 	}
@@ -68,7 +73,24 @@ void	initialize_monitor(t_monitor_info *monitor_info, t_arguments *args, t_philo
 {
 	monitor_info->args = args;
 	monitor_info->philosophers = philosophers;
+	monitor_info->args->finish_flag = 0;
 	pthread_create(&monitor_info->thread_id, NULL, monitor_routine, monitor_info);
+}
+
+void	freeall(t_philo_info *philosophers, pthread_mutex_t *forks, t_arguments *args)
+{
+	int	i;
+
+	free(philosophers);
+	free(forks);
+	pthread_mutex_destroy(args->finished_eating);
+	pthread_mutex_destroy(args->write_mutex);
+	i = 0;
+	while (i < args->number_of_philosophers)
+	{
+		pthread_mutex_destroy(forks + i);
+		i++;
+	}
 }
 
 void	start_simulation(t_arguments *args)
@@ -92,9 +114,7 @@ void	start_simulation(t_arguments *args)
 	initialize_monitor(&monitor_info, args, philosophers);
 	create_threads(philosophers);
 	join_threads(philosophers, &monitor_info);
-	destroy_mutexes(forks, args);
-	free(philosophers);
-	free(forks);
+	freeall(philosophers, forks, args);
 }
 
 int	main(int argc, char **argv)

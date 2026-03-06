@@ -33,19 +33,6 @@ void	initialize_mutexes(pthread_mutex_t *mutexes, t_arguments *args)
 	}
 }
 
-void	destroy_mutexes(pthread_mutex_t *mutexes, t_arguments *args)
-{
-	int	i;
-
-	pthread_mutex_destroy(args->finished_eating);
-	i = 0;
-	while (i < args->number_of_philosophers)
-	{
-		pthread_mutex_destroy(mutexes + i);
-		i++;
-	}
-}
-
 void	initialize_philosophers(t_philo_info *philosophers,
 		pthread_mutex_t *forks, t_arguments *args)
 {
@@ -56,7 +43,7 @@ void	initialize_philosophers(t_philo_info *philosophers,
 	{
 		philosophers[i].args = args;
 		philosophers[i].eat_count = 0;
-		philosophers[i].last_ate_time = get_time();
+		philosophers[i].last_ate_time = 0;
 		{
 			philosophers[i].thread_num = i + 1;
 			if (i % 2 == 0)
@@ -95,6 +82,8 @@ void	join_threads(t_philo_info *philosophers, t_monitor_info *monitor_info)
 	int	i;
 
 	i = 0;
+	if(pthread_join(monitor_info->thread_id, NULL) != 0)
+		error_exit(THREAD_ERROR_1);
 	while (i < philosophers[0].args->number_of_philosophers)
 	{
 		if (pthread_join(philosophers[i].thread_id, NULL) != 0)

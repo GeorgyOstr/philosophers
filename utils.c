@@ -73,9 +73,6 @@ void	print_status(t_philo_info *philosopher, int status)
 	else if (status == THINKING)
 		printf("%ld %d is thinking\n", get_time(), philosopher->thread_num);
 	else if (status == DIED)
-	{
 		printf("%ld %d died\n", get_time(), philosopher->thread_num);
-		return ;
-	}
 	pthread_mutex_unlock(philosopher->args->write_mutex);
 }

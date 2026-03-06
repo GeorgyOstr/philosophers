@@ -52,14 +52,21 @@ void	eat_routine(t_philo_info *philosopher)
 void	sleep_routine(t_philo_info *philosopher)
 {
 	print_status(philosopher, SLEEPING);
-	while (get_time()
-		- philosopher->last_ate_time < philosopher->args->time_to_die
-		&& get_time()
-		- philosopher->last_ate_time < philosopher->args->time_to_sleep)
+	while (get_time() - philosopher->last_ate_time < philosopher->args->time_to_die
+		&& get_time() - philosopher->last_ate_time < philosopher->args->time_to_sleep)
 		;
+	if (get_time() - philosopher->last_ate_time >= philosopher->args->time_to_die)
+		death_exit(philosopher);
 }
 
 void	think_routine(t_philo_info *philosopher)
 {
 	print_status(philosopher, THINKING);
+	if (philosopher->eat_count >= philosopher->args->number_of_eat_to_finish)
+	{
+		if (get_time() - philosopher->last_ate_time >= philosopher->args->time_to_die)
+			death_exit(philosopher);
+		else
+			usleep((philosopher->args->time_to_die - (get_time() - philosopher->last_ate_time)) * 1000 / philosopher->args->number_of_philosophers);
+	}
 }
