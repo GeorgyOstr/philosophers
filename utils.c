@@ -64,15 +64,19 @@ long	ft_atoi(char *str)
 void	print_status(t_philo_info *philosopher, int status)
 {
 	pthread_mutex_lock(philosopher->args->write_mutex);
-	if (status == TAKEN_FORK)
+	pthread_mutex_lock(philosopher->args->finish_mutex);
+	if (status == TAKEN_FORK && !philosopher->args->finish_flag)
 		printf("%ld %d has taken a fork\n", get_time(), philosopher->thread_num);
-	else if (status == EATING)
+	else if (status == EATING && !philosopher->args->finish_flag)
 		printf("%ld %d is eating\n", get_time(), philosopher->thread_num);
-	else if (status == SLEEPING)
+	else if (status == SLEEPING && !philosopher->args->finish_flag)
 		printf("%ld %d is sleeping\n", get_time(), philosopher->thread_num);
-	else if (status == THINKING)
+	else if (status == THINKING && !philosopher->args->finish_flag)
 		printf("%ld %d is thinking\n", get_time(), philosopher->thread_num);
-	else if (status == DIED)
+	else if (status == DIED && !philosopher->args->finish_flag == 1)
 		printf("%ld %d died\n", get_time(), philosopher->thread_num);
+	else if (status == FINISHED && !philosopher->args->finish_flag == 1)
+		printf("All philosophers have eaten at least %d times.\n",  philosopher->args->number_of_eat_to_finish);
 	pthread_mutex_unlock(philosopher->args->write_mutex);
+	pthread_mutex_unlock(philosopher->args->finish_mutex);
 }

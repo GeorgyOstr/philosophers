@@ -30,7 +30,8 @@ enum				e_status
 	EATING,
 	SLEEPING,
 	THINKING,
-	DIED
+	DIED,
+	FINISHED
 };
 
 typedef struct s_arguments
@@ -40,10 +41,10 @@ typedef struct s_arguments
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				number_of_eat_to_finish;
+	int				finish_flag;
 	pthread_mutex_t	*meal_mutex;
 	pthread_mutex_t	*write_mutex;
 	pthread_mutex_t	*finish_mutex;
-	int				finish_flag;
 }					t_arguments;
 
 typedef struct s_philo_info
@@ -73,7 +74,6 @@ void				sleep_routine(t_philo_info *philosopher);
 void				think_routine(t_philo_info *philosopher);
 
 void				*philosopher_routine(void *arg);
-void				*monitor_routine(void *arg);
 void				start_simulation(t_arguments *args);
 
 void				initialize_monitor(t_monitor_info *monitor_info, t_arguments *args,

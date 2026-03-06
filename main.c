@@ -35,14 +35,16 @@ void	*philosopher_routine(void *arg)
 	philosopher = arg;
 	if (philosopher->last_ate_time == 0)
 		philosopher->last_ate_time = get_time();
-	while (get_time()
-		- philosopher->last_ate_time < philosopher->args->time_to_die)
+	pthread_mutex_lock(philosopher->args->finish_mutex);
+	while (!philosopher->args->finish_flag)
 	{
+		pthread_mutex_unlock(philosopher->args->finish_mutex);	
 		think_routine(philosopher);
 		eat_routine(philosopher);
 		sleep_routine(philosopher);
+		pthread_mutex_lock(philosopher->args->finish_mutex);
 	}
-	philosopher->args->finish_flag = 1;
+	pthread_mutex_unlock(philosopher->args->finish_mutex);
 	return (arg);
 }
 
@@ -54,20 +56,16 @@ void	*monitor_routine(void *arg)
 	pthread_mutex_lock(monitor_info->args->finish_mutex);
 	while (!monitor_info->args->finish_flag)
 	{
+		pthread_mutex_unlock(monitor_info->args->finish_mutex);
 		pthread_mutex_lock(monitor_info->args->meal_mutex);
 		if (min_eat_amount(monitor_info->philosophers) == monitor_info->args->number_of_eat_to_finish)
 		{
-			pthread_mutex_lock(monitor_info->args->write_mutex);
-			if (!monitor_info->args->finish_flag)
-				printf("%ld All philosophers have eaten at least %d times.\n",
-					get_time(), monitor_info->args->number_of_eat_to_finish);
-				exit(0);
-			monitor_info->args->finish_flag = 1;
-			pthread_mutex_unlock(monitor_info->args->write_mutex);
+			pthread_mutex_lock(monitor_info->args->finish_mutex);
+			monitor_info->args->finish_flag += 1;
+			pthread_mutex_unlock(monitor_info->args->finish_mutex);
 		}
 		pthread_mutex_unlock(monitor_info->args->meal_mutex);
 	}
-	pthread_mutex_unlock(monitor_info->args->finish_mutex);
 	return (arg);
 }
 
