@@ -12,11 +12,10 @@
 
 #include "philosophers.h"
 
-int	overflow(int i, int n)
+void populate__info(t_monitor_info *monitor_info, t_arguments *args, philosopher_info *philosophers)
 {
-	if (i < 0)
-		return (n - 1);
-	return (i);
+	monitor_info->args = args;
+	monitor_info->philosophers = philosophers;
 }
 
 void	initialize_mutexes(pthread_mutex_t *mutexes, t_arguments *args)

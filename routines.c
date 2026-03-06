@@ -77,3 +77,45 @@ void	think_routine(t_philo_info *philosopher)
 				/ philosopher->args->number_of_philosophers);
 	}
 }
+
+
+void	*philosopher_routine(void *arg)
+{
+	t_philo_info	*philosopher;
+
+	philosopher = arg;
+	if (philosopher->last_ate_time == 0)
+		philosopher->last_ate_time = get_time();
+	pthread_mutex_lock(philosopher->args->finish_mutex);
+	while (!philosopher->args->finish_flag)
+	{
+		pthread_mutex_unlock(philosopher->args->finish_mutex);
+		think_routine(philosopher);
+		eat_routine(philosopher);
+		sleep_routine(philosopher);
+		pthread_mutex_lock(philosopher->args->finish_mutex);
+	}
+	pthread_mutex_unlock(philosopher->args->finish_mutex);
+	return (arg);
+}
+
+void	*monitor_routine(void *arg)
+{
+	t_monitor_info	*monitor_info;
+
+	monitor_info = arg;
+	pthread_mutex_lock(monitor_info->args->finish_mutex);
+	while (!monitor_info->args->finish_flag)
+	{
+		pthread_mutex_unlock(monitor_info->args->finish_mutex);
+		pthread_mutex_lock(monitor_info->args->meal_mutex);
+		if (min_eat_amount(monitor_info->philosophers) == monitor_info->args->number_of_eat_to_finish)
+		{
+			pthread_mutex_lock(monitor_info->args->finish_mutex);
+			monitor_info->args->finish_flag += 1;
+			pthread_mutex_unlock(monitor_info->args->finish_mutex);
+		}
+		pthread_mutex_unlock(monitor_info->args->meal_mutex);
+	}
+	return (arg);
+}

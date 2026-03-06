@@ -12,25 +12,27 @@
 
 #include "philosophers.h"
 
-void	error_exit(int err_num)
+int	overflow(int i, int n)
 {
-	char	c;
-
-	c = '0' + err_num;
-	write(1, "Error ", 6);
-	write(1, &c, 1);
-	write(1, "\n", 1);
-	exit(err_num);
+	if (i < 0)
+		return (n - 1);
+	return (i);
 }
 
-size_t	ft_strlen(char *str)
+int	min_eat_amount(t_philo_info *philosophers)
 {
 	int	i;
+	int	min;
 
+	min = philosophers[0].eat_count;
 	i = 0;
-	while (str[i] && i < 20)
+	while (i < philosophers[0].args->number_of_philosophers)
+	{
+		if (philosophers[i].eat_count < min)
+			min = philosophers[i].eat_count;
 		i++;
-	return (i);
+	}
+	return (min);
 }
 
 long	ft_atoi(char *str)

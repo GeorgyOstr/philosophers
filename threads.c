@@ -26,6 +26,16 @@ void	create_threads(t_philo_info *philosophers)
 	}
 }
 
+void	initialize_monitor(t_monitor_info *monitor_info, t_arguments *args,
+		t_philo_info *philosophers)
+{
+	monitor_info->args = args;
+	monitor_info->philosophers = philosophers;
+	monitor_info->args->finish_flag = 0;
+	pthread_create(&monitor_info->thread_id, NULL, monitor_routine,
+		monitor_info);
+}
+
 void	join_threads(t_philo_info *philosophers, t_monitor_info *monitor_info)
 {
 	int	i;
@@ -40,3 +50,5 @@ void	join_threads(t_philo_info *philosophers, t_monitor_info *monitor_info)
 		i++;
 	}
 }
+
+

@@ -21,12 +21,7 @@ void	start_simulation(t_arguments *args)
 	pthread_mutex_t	finish_mutex;
 	t_monitor_info	monitor_info;
 
-	philosophers = calloc(args->number_of_philosophers, sizeof(*philosophers));
-	if (philosophers == NULL)
-		error_exit(MALLOC_ERROR);
-	forks = calloc(args->number_of_philosophers, sizeof(*forks));
-	if (forks == NULL)
-		error_exit(MALLOC_ERROR);
+
 	args->meal_mutex = &meal_mutex;
 	args->write_mutex = &write_mutex;
 	args->finish_mutex = &finish_mutex;

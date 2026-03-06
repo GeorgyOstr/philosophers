@@ -57,6 +57,7 @@ typedef struct s_philo_info
 	int				eat_count;
 	t_arguments		*args;
 }					t_philo_info;
+
 typedef struct s_monitor_info
 {
 	pthread_t		thread_id;
