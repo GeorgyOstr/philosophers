@@ -45,43 +45,39 @@ void	*philosopher_routine(void *arg)
 
 void	*monitor_routine(void *arg)
 {
-	t_all	*args_and_philosophers;
+	t_monitor_info	*monitor_info;
 
-	args_and_philosophers = arg;
+	monitor_info = arg;
 	while (1)
 	{
-		pthread_mutex_lock(args_and_philosophers->args->finished_eating);
-		if (min_eat_amount(args_and_philosophers->philosophers) == args_and_philosophers->args->number_of_eat_to_finish)
+		pthread_mutex_lock(monitor_info->args->finished_eating);
+		if (min_eat_amount(monitor_info->philosophers) == monitor_info->args->number_of_eat_to_finish)
 		{
-			pthread_mutex_lock(args_and_philosophers->args->write_mutex);
+			pthread_mutex_lock(monitor_info->args->write_mutex);
 			printf("%ld All philosophers have eaten at least %d times.\n",
 				get_time(),
-				args_and_philosophers->args->number_of_eat_to_finish);
+				monitor_info->args->number_of_eat_to_finish);
 			exit(0);
 		}
-		pthread_mutex_unlock(args_and_philosophers->args->finished_eating);
+		pthread_mutex_unlock(monitor_info->args->finished_eating);
 	}
 	return (arg);
 }
 
-void	initialize_monitor(t_arguments *args, t_philo_info *philosophers)
+void	initialize_monitor(t_monitor_info *monitor_info, t_arguments *args, t_philo_info *philosophers)
 {
-	pthread_t	monitor_thread;
-	t_all		all;
-
-	all.args = args;
-	all.philosophers = philosophers;
-	pthread_create(&monitor_thread, NULL, monitor_routine, &all);
-	pthread_detach(monitor_thread);
+	monitor_info->args = args;
+	monitor_info->philosophers = philosophers;
+	pthread_create(&monitor_info->thread_id, NULL, monitor_routine, monitor_info);
 }
 
 void	start_simulation(t_arguments *args)
 {
-	int				i;
 	t_philo_info	*philosophers;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	finished_eating;
 	pthread_mutex_t	write_mutex;
+	t_monitor_info	monitor_info;
 
 	philosophers = calloc(args->number_of_philosophers, sizeof(*philosophers));
 	if (philosophers == NULL)
@@ -93,9 +89,9 @@ void	start_simulation(t_arguments *args)
 	args->write_mutex = &write_mutex;
 	initialize_mutexes(forks, args);
 	initialize_philosophers(philosophers, forks, args);
-	initialize_monitor(args, philosophers);
+	initialize_monitor(&monitor_info, args, philosophers);
 	create_threads(philosophers);
-	join_threads(philosophers);
+	join_threads(philosophers, &monitor_info);
 	destroy_mutexes(forks, args);
 	free(philosophers);
 	free(forks);

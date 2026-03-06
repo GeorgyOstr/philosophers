@@ -90,7 +90,7 @@ void	create_threads(t_philo_info *philosophers)
 	}
 }
 
-void	join_threads(t_philo_info *philosophers)
+void	join_threads(t_philo_info *philosophers, t_monitor_info *monitor_info)
 {
 	int	i;
 

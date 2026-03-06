@@ -55,11 +55,12 @@ typedef struct s_philo_info
 	int				eat_count;
 	t_arguments		*args;
 }					t_philo_info;
-typedef struct s_all
+typedef struct s_monitor_info
 {
+	pthread_t		thread_id;
 	t_arguments		*args;
 	t_philo_info	*philosophers;
-}					t_all;
+}					t_monitor_info;
 
 void				error_exit(int err_num);
 size_t				ft_strlen(char *str);
@@ -74,7 +75,7 @@ void				*philosopher_routine(void *arg);
 void				*monitor_routine(void *arg);
 void				start_simulation(t_arguments *args);
 
-void				initialize_monitor(t_arguments *args,
+void				initialize_monitor(t_monitor_info *monitor_info, t_arguments *args,
 						t_philo_info *philosophers);
 void				*monitor_routine(void *arg);
 
@@ -85,7 +86,7 @@ void				destroy_mutexes(pthread_mutex_t *mutexes,
 void				initialize_philosophers(t_philo_info *philosophers,
 						pthread_mutex_t *forks, t_arguments *args);
 void				create_threads(t_philo_info *philosophers);
-void				join_threads(t_philo_info *philosophers);
+void				join_threads(t_philo_info *philosophers, t_monitor_info *monitor_info);
 int					min_eat_amount(t_philo_info *philosophers);
 
 void				print_status(t_philo_info *philosopher, int status);
