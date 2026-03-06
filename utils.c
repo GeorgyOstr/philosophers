@@ -60,3 +60,19 @@ long	ft_atoi(char *str)
 		error_exit(ATOI_ERROR);
 	return (ans);
 }
+
+void	print_status(t_philo_info *philosopher, int status)
+{
+	pthread_mutex_lock(philosopher->args->write_mutex);
+	if (status == TAKEN_FORK)
+		printf("%ld %d has taken a fork\n", get_time(), philosopher->thread_num);
+	else if (status == EATING)
+		printf("%ld %d is eating\n", get_time(), philosopher->thread_num);
+	else if (status == SLEEPING)
+		printf("%ld %d is sleeping\n", get_time(), philosopher->thread_num);
+	else if (status == THINKING)
+		printf("%ld %d is thinking\n", get_time(), philosopher->thread_num);
+	else if (status == DIED)
+		printf("%ld %d died\n", get_time(), philosopher->thread_num);
+	pthread_mutex_unlock(philosopher->args->write_mutex);
+}

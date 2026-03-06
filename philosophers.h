@@ -24,6 +24,15 @@
 # define THREAD_ERROR 4
 # define THREAD_ERROR_1 5
 
+enum				e_status
+{
+	TAKEN_FORK,
+	EATING,
+	SLEEPING,
+	THINKING,
+	DIED
+};
+
 typedef struct s_arguments
 {
 	int				number_of_philosophers;
@@ -32,6 +41,8 @@ typedef struct s_arguments
 	int				time_to_sleep;
 	int				number_of_eat_to_finish;
 	pthread_mutex_t	*finished_eating;
+	pthread_mutex_t	*write_mutex;
+
 }					t_arguments;
 
 typedef struct s_philo_info
@@ -69,11 +80,13 @@ void				*monitor_routine(void *arg);
 
 void				initialize_mutexes(pthread_mutex_t *mutexes,
 						t_arguments *args);
-void				destroy_mutexes(pthread_mutex_t *mutexes, t_arguments *args);
+void				destroy_mutexes(pthread_mutex_t *mutexes,
+						t_arguments *args);
 void				initialize_philosophers(t_philo_info *philosophers,
 						pthread_mutex_t *forks, t_arguments *args);
 void				create_threads(t_philo_info *philosophers);
 void				join_threads(t_philo_info *philosophers);
 int					min_eat_amount(t_philo_info *philosophers);
 
+void				print_status(t_philo_info *philosopher, int status);
 #endif

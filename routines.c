@@ -20,24 +20,27 @@ long	get_time(void)
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-void death_exit(t_philo_info *philosopher)
+void	death_exit(t_philo_info *philosopher)
 {
-	printf("%ld %d died\n", get_time(), philosopher->thread_num);
+	print_status(philosopher, DIED);
 	exit(0);
 }
 
 void	eat_routine(t_philo_info *philosopher)
 {
 	pthread_mutex_lock(philosopher->left_fork);
-	printf("%ld %d has taken a fork\n", get_time(), philosopher->thread_num);
+	print_status(philosopher, TAKEN_FORK);
 	pthread_mutex_lock(philosopher->right_fork);
-	printf("%ld %d has taken a fork\n", get_time(), philosopher->thread_num);
-	printf("%ld %d is eating\n", get_time(), philosopher->thread_num);
+	print_status(philosopher, TAKEN_FORK);
+	print_status(philosopher, EATING);
 	philosopher->last_ate_time = get_time();
-	while (get_time() - philosopher->last_ate_time < philosopher->args->time_to_die 
-			&& get_time() - philosopher->last_ate_time < philosopher->args->time_to_eat)
+	while (get_time()
+		- philosopher->last_ate_time < philosopher->args->time_to_die
+		&& get_time()
+		- philosopher->last_ate_time < philosopher->args->time_to_eat)
 		;
-	if (get_time() - philosopher->last_ate_time >= philosopher->args->time_to_die)
+	if (get_time()
+		- philosopher->last_ate_time >= philosopher->args->time_to_die)
 		death_exit(philosopher);
 	pthread_mutex_lock(philosopher->args->finished_eating);
 	philosopher->eat_count++;
@@ -48,13 +51,15 @@ void	eat_routine(t_philo_info *philosopher)
 
 void	sleep_routine(t_philo_info *philosopher)
 {
-	printf("%ld %d is sleeping\n", get_time(), philosopher->thread_num);
-	while (get_time() - philosopher->last_ate_time < philosopher->args->time_to_die 
-			&& get_time() - philosopher->last_ate_time < philosopher->args->time_to_sleep)
+	print_status(philosopher, SLEEPING);
+	while (get_time()
+		- philosopher->last_ate_time < philosopher->args->time_to_die
+		&& get_time()
+		- philosopher->last_ate_time < philosopher->args->time_to_sleep)
 		;
 }
 
 void	think_routine(t_philo_info *philosopher)
 {
-	printf("%ld %d is thinking\n", get_time(), philosopher->thread_num);
+	print_status(philosopher, THINKING);
 }
