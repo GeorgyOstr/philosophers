@@ -56,12 +56,12 @@ typedef struct s_philo_info
 	pthread_mutex_t	*forks[2];
 	t_args			*args;
 	t_mutexes		*mutexes;
+	int				*is_someone_died;
 	int				*is_simulation_finished;
 	long			last_ate_time;
 	int				philo_num;
 	int				eat_count;
 	int				is_dead;
-	int				ate_enough;
 }					t_philo_info;
 
 typedef struct s_sim_info
@@ -73,6 +73,7 @@ typedef struct s_sim_info
 	pthread_mutex_t	meal;
 	pthread_mutex_t	write;
 	pthread_mutex_t	finish;
+	int				is_someone_died;
 	int				is_simulation_finished;
 }					t_sim_info;
 

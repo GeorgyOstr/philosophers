@@ -58,10 +58,9 @@ void	eat_routine(t_philo_info *philo)
 	print_status(philo, TAKEN_FORK);
 	if (philo->args->number_of_philos == 1)
 	{
-		while (get_time() - philo->last_ate_time < philo->args->time_to_die)
+		while (!check_dead(philo))
 			;
 		pthread_mutex_unlock(philo->forks[0]);
-		check_dead(philo);
 		return ;
 	}
 	pthread_mutex_lock(philo->forks[1]);
@@ -102,7 +101,8 @@ void	*monitor_routine(void *arg)
 			== sim->philos->args->number_of_eat_to_finish)
 		{
 			pthread_mutex_lock(sim->philos->mutexes->finish);
-			sim->is_simulation_finished = 1;
+			if (!sim->is_someone_died) 
+				sim->is_simulation_finished = 1;
 			pthread_mutex_unlock(sim->philos->mutexes->finish);
 		}
 		pthread_mutex_unlock(sim->philos->mutexes->meal);

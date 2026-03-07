@@ -28,6 +28,7 @@ int	check_dead(t_philo_info *philo)
 		if (!*philo->is_simulation_finished)
 		{
 			*philo->is_simulation_finished = 1;
+			*philo->is_someone_died = 1;
 			philo->is_dead = 1;
 		}
 		pthread_mutex_unlock(philo->mutexes->finish);

@@ -41,6 +41,7 @@ void	populate_info(t_sim_info *sim, t_args *args)
 	int	i;
 
 	sim->is_simulation_finished = 0;
+	sim->is_someone_died = 0;
 	sim->philos = calloc(args->number_of_philos, sizeof(*sim->philos));
 	if (sim->philos == NULL)
 		error_exit(MALLOC_ERROR);
@@ -53,10 +54,10 @@ void	populate_info(t_sim_info *sim, t_args *args)
 		sim->philos[i].args = args;
 		sim->philos[i].philo_num = i + 1;
 		sim->philos[i].is_simulation_finished = &sim->is_simulation_finished;
+		sim->philos[i].is_someone_died = &sim->is_someone_died;
 		sim->philos[i].eat_count = 0;
 		sim->philos[i].last_ate_time = 0;
 		sim->philos[i].is_dead = 0;
-		sim->philos[i].ate_enough = 0;
 		i++;
 	}
 	initialize_mutexes(sim);
