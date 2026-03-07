@@ -14,8 +14,6 @@
 
 void	start_simulation(t_sim_info *sim)
 {
-	initialize_mutexes(sim);
-	initialize_philos(sim);
 	create_philo_threads(sim);
 	create_monitor_thread(sim);
 	join_threads(sim);

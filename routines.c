@@ -37,13 +37,19 @@ void	*philo_routine(void *arg)
 void	think_routine(t_philo_info *philo)
 {
 	print_status(philo, THINKING);
+	pthread_mutex_lock(philo->mutexes->meal);
 	if (philo->eat_count >= philo->args->number_of_eat_to_finish)
 	{
+		pthread_mutex_unlock(philo->mutexes->meal);
 		if (!check_dead(philo))
+		{
 			usleep((philo->args->time_to_die - (get_time()
 						- philo->last_ate_time)) * 1000
 				/ (philo->args->number_of_philos + 1));
+		}
+		pthread_mutex_lock(philo->mutexes->meal);
 	}
+	pthread_mutex_unlock(philo->mutexes->meal);
 }
 
 void	eat_routine(t_philo_info *philo)
@@ -95,11 +101,11 @@ void	*monitor_routine(void *arg)
 		if (min_eat_amount(sim->philos)
 			== sim->philos->args->number_of_eat_to_finish)
 		{
-			pthread_mutex_unlock(sim->philos->mutexes->meal);
 			pthread_mutex_lock(sim->philos->mutexes->finish);
 			sim->is_simulation_finished = 1;
 			pthread_mutex_unlock(sim->philos->mutexes->finish);
 		}
+		pthread_mutex_unlock(sim->philos->mutexes->meal);
 		pthread_mutex_lock(sim->philos->mutexes->finish);
 	}
 	pthread_mutex_unlock(sim->philos->mutexes->finish);

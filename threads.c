@@ -28,7 +28,8 @@ void	create_philo_threads(t_sim_info *sim)
 
 void	create_monitor_thread(t_sim_info *sim)
 {
-	pthread_create(&sim->thread_id, NULL, &monitor_routine, sim);
+	if (pthread_create(&sim->thread_id, NULL, &monitor_routine, sim))
+		error_exit(THREAD_ERROR);
 }
 
 void	join_threads(t_sim_info *sim)

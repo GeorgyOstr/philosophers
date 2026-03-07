@@ -68,8 +68,8 @@ void	error_exit(int err_num)
 	char	c;
 
 	c = '0' + err_num;
-	write(1, "Error ", 6);
-	write(1, &c, 1);
-	write(1, "\n", 1);
+	write(2, "Error ", 6);
+	write(2, &c, 1);
+	write(2, "\n", 1);
 	exit(err_num);
 }

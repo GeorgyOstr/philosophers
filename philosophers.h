@@ -69,6 +69,10 @@ typedef struct s_sim_info
 	pthread_t		thread_id;
 	t_philo_info	*philos;
 	pthread_mutex_t	*forks;
+	t_mutexes		mutexes;
+	pthread_mutex_t	meal;
+	pthread_mutex_t	write;
+	pthread_mutex_t	finish;
 	int				is_simulation_finished;
 }					t_sim_info;
 

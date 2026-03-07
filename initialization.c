@@ -16,13 +16,17 @@ void	initialize_mutexes(t_sim_info *sim)
 {
 	int	i;
 
-	pthread_mutex_init(sim->philos->mutexes->meal, NULL);
-	pthread_mutex_init(sim->philos->mutexes->write, NULL);
-	pthread_mutex_init(sim->philos->mutexes->finish, NULL);
+	pthread_mutex_init(&sim->meal, NULL);
+	pthread_mutex_init(&sim->write, NULL);
+	pthread_mutex_init(&sim->finish, NULL);
+	sim->mutexes.meal = &sim->meal;
+	sim->mutexes.write = &sim->write;
+	sim->mutexes.finish = &sim->finish;
 	i = 0;
 	while (i < sim->philos->args->number_of_philos)
 	{
 		pthread_mutex_init(sim->forks + i, NULL);
+		sim->philos[i].mutexes = &sim->mutexes; 
 		i++;
 	}
 }
