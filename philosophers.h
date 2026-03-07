@@ -34,63 +34,69 @@ enum				e_status
 	FINISHED
 };
 
-typedef struct s_arguments
+typedef struct s_args
 {
-	int				number_of_philosophers;
+	int				number_of_philos;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				number_of_eat_to_finish;
-	int				finish_flag;
-	pthread_mutex_t	*meal_mutex;
-	pthread_mutex_t	*write_mutex;
-	pthread_mutex_t	*finish_mutex;
-}					t_arguments;
+}					t_args;
+
+typedef struct s_mutexes
+{	
+	pthread_mutex_t	*meal;
+	pthread_mutex_t	*write;
+	pthread_mutex_t	*finish;
+}					t_mutexes;
 
 typedef struct s_philo_info
 {
 	pthread_t		thread_id;
-	int				thread_num;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	*forks[2];
+	t_args			*args;
+	t_mutexes		*mutexes;
+	int				*is_simulation_finished;
 	long			last_ate_time;
+	int				philo_num;
 	int				eat_count;
-	t_arguments		*args;
+	int				is_dead;
+	int				ate_enough;
 }					t_philo_info;
 
-typedef struct s_monitor_info
+typedef struct s_sim_info
 {
 	pthread_t		thread_id;
-	t_arguments		*args;
-	t_philo_info	*philosophers;
-}					t_monitor_info;
+	t_philo_info	*philos;
+	pthread_mutex_t	*forks;
+	int				is_simulation_finished;
+}					t_sim_info;
 
+
+void				populate_info(t_sim_info *sim, t_args *args);
 void				error_exit(int err_num);
-size_t				ft_strlen(char *str);
-long				ft_atoi(char *str);
+
+void				initialize_mutexes(t_sim_info *sim);
+void				initialize_philos(t_sim_info *sim);
+void				clean_up(t_sim_info *sim);
+
+void				start_simulation(t_sim_info *sim);
+int					check_dead(t_philo_info *philo);
 long				get_time(void);
 
-void				eat_routine(t_philo_info *philosopher);
-void				sleep_routine(t_philo_info *philosopher);
-void				think_routine(t_philo_info *philosopher);
+void				create_philo_threads(t_sim_info *philos);
+void				create_monitor_thread(t_sim_info *sim);
+void				join_threads(t_sim_info *sim);
 
-void				*philosopher_routine(void *arg);
-void				start_simulation(t_arguments *args);
-
-void				initialize_monitor(t_monitor_info *monitor_info,
-						t_arguments *args, t_philo_info *philosophers);
+void				*philo_routine(void *arg);
+void				think_routine(t_philo_info *philo);
+void				eat_routine(t_philo_info *philo);
+void				sleep_routine(t_philo_info *philo);
 void				*monitor_routine(void *arg);
 
-void				initialize_mutexes(pthread_mutex_t *mutexes,
-						t_arguments *args);
-void				destroy_mutexes(pthread_mutex_t *mutexes,
-						t_arguments *args);
-void				initialize_philosophers(t_philo_info *philosophers,
-						pthread_mutex_t *forks, t_arguments *args);
-void				create_threads(t_philo_info *philosophers);
-void				join_threads(t_philo_info *philosophers,
-						t_monitor_info *monitor_info);
-int					min_eat_amount(t_philo_info *philosophers);
+int					overflow(int i, int n);
+int					min_eat_amount(t_philo_info *philos);
+long				ft_atoi(char *str);
 
-void				print_status(t_philo_info *philosopher, int status);
+void				print_status(t_philo_info *philo, int status);
 #endif

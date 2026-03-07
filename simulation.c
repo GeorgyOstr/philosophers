@@ -12,23 +12,36 @@
 
 #include "philosophers.h"
 
-void	start_simulation(t_arguments *args)
+void	start_simulation(t_sim_info *sim)
 {
-	t_philo_info	*philosophers;
-	pthread_mutex_t	*forks;
-	pthread_mutex_t	meal_mutex;
-	pthread_mutex_t	write_mutex;
-	pthread_mutex_t	finish_mutex;
-	t_monitor_info	monitor_info;
+	initialize_mutexes(sim);
+	initialize_philos(sim);
+	create_philo_threads(sim);
+	create_monitor_thread(sim);
+	join_threads(sim);
+	clean_up(sim);
+}
 
+int	check_dead(t_philo_info *philo)
+{
+	if (get_time() - philo->last_ate_time >= philo->args->time_to_die)
+	{
+		pthread_mutex_lock(philo->mutexes->finish);
+		if (!*philo->is_simulation_finished)
+		{
+			*philo->is_simulation_finished = 1;
+			philo->is_dead = 1;
+		}
+		pthread_mutex_unlock(philo->mutexes->finish);
+		return (1);
+	}
+	return (0);
+}
 
-	args->meal_mutex = &meal_mutex;
-	args->write_mutex = &write_mutex;
-	args->finish_mutex = &finish_mutex;
-	initialize_mutexes(forks, args);
-	initialize_philosophers(philosophers, forks, args);
-	initialize_monitor(&monitor_info, args, philosophers);
-	create_threads(philosophers);
-	join_threads(philosophers, &monitor_info);
-	freeall(philosophers, forks, args);
+long	get_time(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }

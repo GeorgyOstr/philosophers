@@ -12,71 +12,61 @@
 
 #include "philosophers.h"
 
-void populate__info(t_monitor_info *monitor_info, t_arguments *args, philosopher_info *philosophers)
-{
-	monitor_info->args = args;
-	monitor_info->philosophers = philosophers;
-}
 
-void	initialize_mutexes(pthread_mutex_t *mutexes, t_arguments *args)
+void	initialize_mutexes(t_sim_info *sim)
 {
 	int	i;
 
-	pthread_mutex_init(args->meal_mutex, NULL);
-	pthread_mutex_init(args->write_mutex, NULL);
-	pthread_mutex_init(args->finish_mutex, NULL);
+	pthread_mutex_init(sim->philos->mutexes->meal, NULL);
+	pthread_mutex_init(sim->philos->mutexes->write, NULL);
+	pthread_mutex_init(sim->philos->mutexes->finish, NULL);
+	
 	i = 0;
-	while (i < args->number_of_philosophers)
+	while (i < sim->philos->args->number_of_philos)
 	{
-		pthread_mutex_init(mutexes + i, NULL);
+		pthread_mutex_init(sim->forks + i, NULL);
 		i++;
 	}
 }
 
-void	initialize_philosophers(t_philo_info *philosophers,
-		pthread_mutex_t *forks, t_arguments *args)
+void	initialize_philos(t_sim_info *sim)
 {
 	int	i;
 
 	i = 0;
-	while (i < args->number_of_philosophers)
+	while (i < sim->philos->args->number_of_philos)
 	{
-		philosophers[i].args = args;
-		philosophers[i].eat_count = 0;
-		philosophers[i].last_ate_time = 0;
 		{
-			philosophers[i].thread_num = i + 1;
 			if (i % 2 == 0)
 			{
-				philosophers[i].right_fork = forks + overflow(i - 1,
-						args->number_of_philosophers);
-				philosophers[i].left_fork = forks + i;
+				sim->philos[i].forks[0] = sim->forks + overflow(i - 1,
+						sim->philos->args->number_of_philos);
+				sim->philos[i].forks[1] = sim->forks + i;
 			}
 			else
 			{
-				philosophers[i].left_fork = forks + overflow(i - 1,
-						args->number_of_philosophers);
-				philosophers[i].right_fork = forks + i;
+				sim->philos[i].forks[1] = sim->forks + overflow(i - 1,
+						sim->philos->args->number_of_philos);
+				sim->philos[i].forks[0] = sim->forks + i;
 			}
 			i++;
 		}
 	}
 }
 
-void	freeall(t_philo_info *philosophers, pthread_mutex_t *forks,
-		t_arguments *args)
+void	clean_up(t_sim_info *sim)
 {
 	int	i;
 
-	pthread_mutex_destroy(args->meal_mutex);
-	pthread_mutex_destroy(args->write_mutex);
-	pthread_mutex_destroy(args->finish_mutex);
+	pthread_mutex_destroy(sim->philos->mutexes->meal);
+	pthread_mutex_destroy(sim->philos->mutexes->write);
+	pthread_mutex_destroy(sim->philos->mutexes->finish);
 	i = 0;
-	while (i < args->number_of_philosophers)
+	while (i < sim->philos->args->number_of_philos)
 	{
-		pthread_mutex_destroy(forks + i);
+		pthread_mutex_destroy(sim->forks + i);
 		i++;
 	}
-	free(philosophers);
-	free(forks);
+	free(sim->forks);
+	free(sim->philos);
 }

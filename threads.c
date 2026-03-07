@@ -12,40 +12,35 @@
 
 #include "philosophers.h"
 
-void	create_threads(t_philo_info *philosophers)
+void	create_philo_threads(t_sim_info *sim)
 {
 	int	i;
 
 	i = 0;
-	while (i < philosophers[0].args->number_of_philosophers)
+	while (i < sim->philos->args->number_of_philos)
 	{
-		if (pthread_create(&(philosophers[i].thread_id), NULL,
-				&philosopher_routine, &(philosophers[i])) != 0)
+		if (pthread_create(&sim->philos[i].thread_id, NULL,
+				&philo_routine, &sim->philos[i]) != 0)
 			error_exit(THREAD_ERROR);
 		i++;
 	}
 }
 
-void	initialize_monitor(t_monitor_info *monitor_info, t_arguments *args,
-		t_philo_info *philosophers)
+void	create_monitor_thread(t_sim_info *sim)
 {
-	monitor_info->args = args;
-	monitor_info->philosophers = philosophers;
-	monitor_info->args->finish_flag = 0;
-	pthread_create(&monitor_info->thread_id, NULL, monitor_routine,
-		monitor_info);
+	pthread_create(&sim->thread_id, NULL, &monitor_routine, sim);
 }
 
-void	join_threads(t_philo_info *philosophers, t_monitor_info *monitor_info)
+void	join_threads(t_sim_info *sim)
 {
 	int	i;
 
 	i = 0;
-	if (pthread_join(monitor_info->thread_id, NULL) != 0)
+	if (pthread_join(sim->thread_id, NULL) != 0)
 		error_exit(THREAD_ERROR_1);
-	while (i < philosophers[0].args->number_of_philosophers)
+	while (i < sim->philos->args->number_of_philos)
 	{
-		if (pthread_join(philosophers[i].thread_id, NULL) != 0)
+		if (pthread_join(sim->philos[i].thread_id, NULL) != 0)
 			error_exit(THREAD_ERROR_1);
 		i++;
 	}
