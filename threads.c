@@ -19,8 +19,8 @@ void	create_philo_threads(t_sim_info *sim)
 	i = 0;
 	while (i < sim->philos->args->number_of_philos)
 	{
-		if (pthread_create(&sim->philos[i].thread_id, NULL,
-				&philo_routine, &sim->philos[i]) != 0)
+		if (pthread_create(&sim->philos[i].thread_id, NULL, &philo_routine,
+				&sim->philos[i]) != 0)
 			error_exit(THREAD_ERROR);
 		i++;
 	}
@@ -45,5 +45,3 @@ void	join_threads(t_sim_info *sim)
 		i++;
 	}
 }
-
-

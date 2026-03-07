@@ -44,7 +44,7 @@ typedef struct s_args
 }					t_args;
 
 typedef struct s_mutexes
-{	
+{
 	pthread_mutex_t	*meal;
 	pthread_mutex_t	*write;
 	pthread_mutex_t	*finish;
@@ -71,7 +71,6 @@ typedef struct s_sim_info
 	pthread_mutex_t	*forks;
 	int				is_simulation_finished;
 }					t_sim_info;
-
 
 void				populate_info(t_sim_info *sim, t_args *args);
 void				error_exit(int err_num);

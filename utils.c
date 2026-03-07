@@ -12,12 +12,12 @@
 
 #include "philosophers.h"
 
-size_t ft_strlen(char *s)
+size_t	ft_strlen(char *s)
 {
 	int	i;
 
 	i = 0;
-	while(s[i])
+	while (s[i])
 		i++;
 	return (i);
 }
@@ -78,20 +78,18 @@ void	print_status(t_philo_info *philo, int status)
 	pthread_mutex_lock(philo->mutexes->finish);
 	pthread_mutex_lock(philo->mutexes->write);
 	if (status == TAKEN_FORK && !(*philo->is_simulation_finished))
-		printf("%ld %d has taken a fork\n", get_time(),
-			philo->philo_num);
+		printf("%ld %d has taken a fork\n", get_time(), philo->philo_num);
 	else if (status == EATING && !(*philo->is_simulation_finished))
 		printf("%ld %d is eating\n", get_time(), philo->philo_num);
 	else if (status == SLEEPING && !(*philo->is_simulation_finished))
 		printf("%ld %d is sleeping\n", get_time(), philo->philo_num);
 	else if (status == THINKING && !(*philo->is_simulation_finished))
 		printf("%ld %d is thinking\n", get_time(), philo->philo_num);
-	
 	else if (status == DIED && *philo->is_simulation_finished)
 		printf("%ld %d died\n", get_time(), philo->philo_num);
 	else if (status == FINISHED && *philo->is_simulation_finished)
 		printf("All philos have eaten at least %d times.\n",
-				philo->args->number_of_eat_to_finish);
+			philo->args->number_of_eat_to_finish);
 	pthread_mutex_unlock(philo->mutexes->write);
 	pthread_mutex_unlock(philo->mutexes->finish);
 }

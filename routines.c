@@ -92,7 +92,7 @@ void	*monitor_routine(void *arg)
 	{
 		pthread_mutex_unlock(sim->philos->mutexes->finish);
 		pthread_mutex_lock(sim->philos->mutexes->meal);
-		if (min_eat_amount(sim->philos) 
+		if (min_eat_amount(sim->philos)
 			== sim->philos->args->number_of_eat_to_finish)
 		{
 			pthread_mutex_unlock(sim->philos->mutexes->meal);
@@ -103,6 +103,6 @@ void	*monitor_routine(void *arg)
 		pthread_mutex_lock(sim->philos->mutexes->finish);
 	}
 	pthread_mutex_unlock(sim->philos->mutexes->finish);
-	print_status(sim->philos, FINISHED);	
+	print_status(sim->philos, FINISHED);
 	return (arg);
 }

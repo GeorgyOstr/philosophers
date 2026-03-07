@@ -12,7 +12,6 @@
 
 #include "philosophers.h"
 
-
 void	initialize_mutexes(t_sim_info *sim)
 {
 	int	i;
@@ -20,7 +19,6 @@ void	initialize_mutexes(t_sim_info *sim)
 	pthread_mutex_init(sim->philos->mutexes->meal, NULL);
 	pthread_mutex_init(sim->philos->mutexes->write, NULL);
 	pthread_mutex_init(sim->philos->mutexes->finish, NULL);
-	
 	i = 0;
 	while (i < sim->philos->args->number_of_philos)
 	{
