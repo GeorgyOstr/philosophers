@@ -37,7 +37,7 @@ int	check_dead(t_philo_info *philo)
 	return (0);
 }
 
-int check_anyone_dead(t_sim_info *sim)
+int	check_anyone_dead(t_sim_info *sim)
 {
 	int	i;
 
@@ -45,7 +45,8 @@ int check_anyone_dead(t_sim_info *sim)
 	pthread_mutex_lock(sim->philos->mutexes->finish);
 	while (i < sim->philos->args->number_of_philos)
 	{
-		if (get_time() - sim->philos[i].last_ate_time >= sim->philos[i].args->time_to_die)
+		if (get_time()
+			- sim->philos[i].last_ate_time >= sim->philos[i].args->time_to_die)
 		{
 			if (!sim->is_simulation_finished)
 			{
@@ -60,7 +61,6 @@ int check_anyone_dead(t_sim_info *sim)
 	}
 	pthread_mutex_unlock(sim->philos->mutexes->finish);
 	return (0);
-
 }
 
 long	get_time(void)

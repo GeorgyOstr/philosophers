@@ -87,7 +87,8 @@ void	print_status(t_philo_info *philo, int status)
 		printf("%ld %d is thinking\n", get_time(), philo->philo_num);
 	else if (status == DIED && philo->is_dead)
 		printf("%ld %d died\n", get_time(), philo->philo_num);
-	else if (status == FINISHED && *philo->is_simulation_finished && !*philo->is_someone_died)
+	else if (status == FINISHED && *philo->is_simulation_finished
+		&& !*philo->is_someone_died)
 		printf("All philos have eaten at least %d times.\n",
 			philo->args->number_of_eat_to_finish);
 	pthread_mutex_unlock(philo->mutexes->write);

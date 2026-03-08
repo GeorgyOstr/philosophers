@@ -26,7 +26,7 @@ void	initialize_mutexes(t_sim_info *sim)
 	while (i < sim->philos->args->number_of_philos)
 	{
 		pthread_mutex_init(sim->forks + i, NULL);
-		sim->philos[i].mutexes = &sim->mutexes; 
+		sim->philos[i].mutexes = &sim->mutexes;
 		i++;
 	}
 }

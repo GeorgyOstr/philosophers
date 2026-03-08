@@ -101,16 +101,11 @@ void	*monitor_routine(void *arg)
 			== sim->philos->args->number_of_eat_to_finish)
 		{
 			pthread_mutex_lock(sim->philos->mutexes->finish);
-			if (!sim->is_someone_died) 
+			if (!sim->is_someone_died)
 				sim->is_simulation_finished = 1;
 			pthread_mutex_unlock(sim->philos->mutexes->finish);
 		}
-		if (check_anyone_dead(sim))
-		{
-			pthread_mutex_lock(sim->philos->mutexes->finish);
-
-			pthread_mutex_unlock(sim->philos->mutexes->finish);
-		}
+		check_anyone_dead(sim);
 		pthread_mutex_unlock(sim->philos->mutexes->meal);
 		pthread_mutex_lock(sim->philos->mutexes->finish);
 	}
