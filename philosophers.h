@@ -86,6 +86,7 @@ void				clean_up(t_sim_info *sim);
 
 void				start_simulation(t_sim_info *sim);
 int					check_dead(t_philo_info *philo);
+int					check_anyone_dead(t_sim_info *sim);	
 long				get_time(void);
 
 void				create_philo_threads(t_sim_info *philos);
