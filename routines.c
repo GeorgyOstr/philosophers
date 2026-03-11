@@ -17,7 +17,7 @@ int busy_sleep(t_philo_info *philo, int duration)
 	long	start;
 
 	start = get_time();
-	while (!(get_time() - start < duration))
+	while (get_time() - start < duration)
 		if (check_dead(philo))
 			return (1);
 	return (0);
@@ -28,6 +28,8 @@ void	*philo_routine(void *arg)
 	t_philo_info	*philo;
 
 	philo = arg;
+	if (philo->last_ate_time == 0)
+		philo->last_ate_time = get_time();
 	pthread_mutex_lock(philo->mutexes->finish);
 	while (!*philo->is_simulation_finished)
 	{
@@ -74,7 +76,7 @@ int	think_routine(t_philo_info *philo)
 			return (1);
 	if (print_status(philo, TAKEN_FORK))
 		return (1);
-	while (!grabbing_fork(philo, 1))
+	while (grabbing_fork(philo, 1))
 		if (check_dead(philo))
 			return (1);
 	if (print_status(philo, TAKEN_FORK))
@@ -87,10 +89,11 @@ int	eat_routine(t_philo_info *philo)
 	if (print_status(philo, EATING))
 		return (1);
 	philo->eat_count++;
+	philo->last_ate_time = get_time();
 	if (philo->eat_count >= philo->args->number_of_eat_to_finish)
 	{
 		pthread_mutex_lock(philo->mutexes->meal);
-		philo->eat_enough_count += 1;
+		*philo->eat_enough_count += 1;
 		if (*philo->eat_enough_count == philo->args->number_of_philos)
 		{
 			pthread_mutex_unlock(philo->mutexes->meal);		
@@ -111,7 +114,7 @@ int	sleep_routine(t_philo_info *philo)
 {
 	if (print_status(philo, SLEEPING))
 		return (1);
-	if (busy_sleep(philo, philo->args->time_to_eat))
+	if (busy_sleep(philo, philo->args->time_to_sleep))
 		return (1);
 	return (0);
 }
