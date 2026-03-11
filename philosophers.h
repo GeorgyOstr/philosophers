@@ -62,7 +62,7 @@ typedef struct s_philo_info
 	int				philo_num;
 	int				eat_count;
 	int				is_dead;
-	int				*sim_start;
+	long			*sim_start;
 }					t_philo_info;
 
 typedef struct s_sim_info
@@ -76,7 +76,7 @@ typedef struct s_sim_info
 	pthread_mutex_t	finish;
 	int				is_someone_died;
 	int				is_simulation_finished;
-	int				sim_start;
+	long			sim_start;
 }					t_sim_info;
 
 void				populate_info(t_sim_info *sim, t_args *args);
