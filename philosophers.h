@@ -58,11 +58,11 @@ typedef struct s_philo_info
 	t_mutexes		*mutexes;
 	int				*is_someone_died;
 	int				*is_simulation_finished;
+	long			*sim_start;
 	long			last_ate_time;
 	int				philo_num;
 	int				eat_count;
 	int				is_dead;
-	long			*sim_start;
 }					t_philo_info;
 
 typedef struct s_sim_info
