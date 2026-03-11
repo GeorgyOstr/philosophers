@@ -54,10 +54,12 @@ typedef struct s_philo_info
 {
 	pthread_t		thread_id;
 	pthread_mutex_t	*forks[2];
+	int				*forks_states[2];
 	t_args			*args;
 	t_mutexes		*mutexes;
 	int				*is_someone_died;
 	int				*is_simulation_finished;
+	int				*eat_enough_count;
 	long			*sim_start;
 	long			last_ate_time;
 	int				philo_num;
@@ -70,6 +72,7 @@ typedef struct s_sim_info
 	pthread_t		thread_id;
 	t_philo_info	*philos;
 	pthread_mutex_t	*forks;
+	int				*forks_states;
 	t_mutexes		mutexes;
 	pthread_mutex_t	meal;
 	pthread_mutex_t	write;
@@ -77,6 +80,7 @@ typedef struct s_sim_info
 	int				is_someone_died;
 	int				is_simulation_finished;
 	long			sim_start;
+	int				eat_enough_count;
 }					t_sim_info;
 
 void				populate_info(t_sim_info *sim, t_args *args);
@@ -88,22 +92,26 @@ void				clean_up(t_sim_info *sim);
 
 void				start_simulation(t_sim_info *sim);
 int					check_dead(t_philo_info *philo);
-int					check_anyone_dead(t_sim_info *sim);	
+int					check_dead_already_locked(t_philo_info *philo);
 long				get_time(void);
 
 void				create_philo_threads(t_sim_info *philos);
 void				create_monitor_thread(t_sim_info *sim);
 void				join_threads(t_sim_info *sim);
 
+int 				grabbing_fork(t_philo_info *philo, int num);
+int 				releasing_fork(t_philo_info *philo, int num);
+
+int					busy_sleep(t_philo_info *philo, int duration);
 void				*philo_routine(void *arg);
-void				think_routine(t_philo_info *philo);
-void				eat_routine(t_philo_info *philo);
-void				sleep_routine(t_philo_info *philo);
+int					think_routine(t_philo_info *philo);
+int					eat_routine(t_philo_info *philo);
+int					sleep_routine(t_philo_info *philo);
 void				*monitor_routine(void *arg);
 
 int					overflow(int i, int n);
 int					min_eat_amount(t_philo_info *philos);
 long				ft_atoi(char *str);
 
-void				print_status(t_philo_info *philo, int status);
+int				print_status(t_philo_info *philo, int status);
 #endif

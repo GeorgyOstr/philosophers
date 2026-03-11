@@ -73,10 +73,12 @@ long	ft_atoi(char *str)
 	return (ans);
 }
 
-void	print_status(t_philo_info *philo, int status)
+int	print_status(t_philo_info *philo, int status)
 {
 	pthread_mutex_lock(philo->mutexes->finish);
 	pthread_mutex_lock(philo->mutexes->write);
+	if (check_dead_already_locked(philo))
+		return (1);
 	if (status == TAKEN_FORK && !(*philo->is_simulation_finished))
 		printf("%ld %d has taken a fork\n", get_time() - *philo->sim_start, philo->philo_num);
 	else if (status == EATING && !(*philo->is_simulation_finished))
@@ -93,4 +95,5 @@ void	print_status(t_philo_info *philo, int status)
 			philo->args->number_of_eat_to_finish);
 	pthread_mutex_unlock(philo->mutexes->write);
 	pthread_mutex_unlock(philo->mutexes->finish);
+	return (0);
 }

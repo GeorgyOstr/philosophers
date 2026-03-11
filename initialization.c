@@ -33,10 +33,9 @@ void	initialize_mutexes(t_sim_info *sim)
 
 void	initialize_philos(t_sim_info *sim)
 {
-	int	i;
+	static int	i = -1;
 
-	i = 0;
-	while (i < sim->philos->args->number_of_philos)
+	while (++i < sim->philos->args->number_of_philos)
 	{
 		{
 			if (i % 2 == 0)
@@ -44,14 +43,19 @@ void	initialize_philos(t_sim_info *sim)
 				sim->philos[i].forks[0] = sim->forks + overflow(i - 1,
 						sim->philos->args->number_of_philos);
 				sim->philos[i].forks[1] = sim->forks + i;
+				sim->philos[i].forks_states[0] = sim->forks_states + overflow(i - 1,
+						sim->philos->args->number_of_philos);
+				sim->philos[i].forks_states[1] = sim->forks_states + i;
 			}
 			else
 			{
 				sim->philos[i].forks[1] = sim->forks + overflow(i - 1,
 						sim->philos->args->number_of_philos);
 				sim->philos[i].forks[0] = sim->forks + i;
+				sim->philos[i].forks_states[1] = sim->forks_states + overflow(i - 1,
+						sim->philos->args->number_of_philos);
+				sim->philos[i].forks_states[0] = sim->forks_states + i;
 			}
-			i++;
 		}
 	}
 }
