@@ -17,7 +17,7 @@ int busy_sleep(t_philo_info *philo, int duration)
 	long	start;
 
 	start = get_time();
-	while (!duration - start < duration)
+	while (!(get_time() - start < duration))
 		if (check_dead(philo))
 			return (1);
 	return (0);
@@ -29,7 +29,7 @@ void	*philo_routine(void *arg)
 
 	philo = arg;
 	pthread_mutex_lock(philo->mutexes->finish);
-	while (!philo->is_simulation_finished)
+	while (!*philo->is_simulation_finished)
 	{
 		pthread_mutex_unlock(philo->mutexes->finish);
 		if (think_routine(philo))
@@ -53,7 +53,7 @@ int grabbing_fork(t_philo_info *philo, int num)
 		return (1);
 	}
 	*philo->forks_states[num] = 1;
-	pthread_mutex_unlock(philo->forks[0]);
+	pthread_mutex_unlock(philo->forks[num]);
 	return (0);
 }
 

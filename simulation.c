@@ -30,6 +30,7 @@ int	check_dead(t_philo_info *philo)
 			*philo->is_simulation_finished = 1;
 			printf("%ld %d died\n", get_time() - *philo->sim_start, philo->philo_num);
 		}
+		pthread_mutex_unlock(philo->mutexes->finish);
 		return (1);
 	}
 	pthread_mutex_unlock(philo->mutexes->finish);
@@ -45,6 +46,8 @@ int	check_dead_already_locked(t_philo_info *philo)
 			*philo->is_simulation_finished = 1;
 			printf("%ld %d died\n", get_time() - *philo->sim_start, philo->philo_num);
 		}
+		pthread_mutex_unlock(philo->mutexes->write);
+		pthread_mutex_unlock(philo->mutexes->finish);
 		return (1);
 	}
 	return (0);

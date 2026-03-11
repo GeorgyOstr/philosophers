@@ -49,8 +49,8 @@ void	populate_info(t_sim_info *sim, t_args *args)
 	sim->forks = calloc(args->number_of_philos, sizeof(*sim->forks));
 	if (sim->forks == NULL)
 		error_exit(MALLOC_ERROR);
-	sim->forks = calloc(args->number_of_philos, sizeof(*sim->forks_states));
-	if (sim->forks == NULL)
+	sim->forks_states = calloc(args->number_of_philos, sizeof(*sim->forks_states));
+	if (sim->forks_states == NULL)
 		error_exit(MALLOC_ERROR);
 	while (++i < args->number_of_philos)
 	{

@@ -100,7 +100,7 @@ void				create_monitor_thread(t_sim_info *sim);
 void				join_threads(t_sim_info *sim);
 
 int 				grabbing_fork(t_philo_info *philo, int num);
-int 				releasing_fork(t_philo_info *philo, int num);
+int 				release_fork(t_philo_info *philo, int num);
 
 int					busy_sleep(t_philo_info *philo, int duration);
 void				*philo_routine(void *arg);
