@@ -99,8 +99,8 @@ void				create_philo_threads(t_sim_info *philos);
 void				create_monitor_thread(t_sim_info *sim);
 void				join_threads(t_sim_info *sim);
 
-int 				grabbing_fork(t_philo_info *philo, int num);
-int 				release_fork(t_philo_info *philo, int num);
+int					grabbing_fork(t_philo_info *philo, int num);
+int					release_fork(t_philo_info *philo, int num);
 
 int					busy_sleep(t_philo_info *philo, int duration);
 void				*philo_routine(void *arg);
@@ -113,5 +113,5 @@ int					overflow(int i, int n);
 int					min_eat_amount(t_philo_info *philos);
 long				ft_atoi(char *str);
 
-int				print_status(t_philo_info *philo, int status);
+int					print_status(t_philo_info *philo, int status);
 #endif

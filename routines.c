@@ -12,7 +12,7 @@
 
 #include "philosophers.h"
 
-int busy_sleep(t_philo_info *philo, int duration)
+int	busy_sleep(t_philo_info *philo, int duration)
 {
 	long	start;
 
@@ -35,18 +35,18 @@ void	*philo_routine(void *arg)
 	{
 		pthread_mutex_unlock(philo->mutexes->finish);
 		if (think_routine(philo))
-			break;
+			break ;
 		if (eat_routine(philo))
-			break;
+			break ;
 		if (sleep_routine(philo))
-			break;
+			break ;
 		pthread_mutex_lock(philo->mutexes->finish);
 	}
 	pthread_mutex_unlock(philo->mutexes->finish);
-	return arg;
+	return (arg);
 }
 
-int grabbing_fork(t_philo_info *philo, int num)
+int	grabbing_fork(t_philo_info *philo, int num)
 {
 	pthread_mutex_lock(philo->forks[num]);
 	if (*philo->forks_states[num] == 1)
@@ -106,13 +106,12 @@ int	eat_routine(t_philo_info *philo)
 				pthread_mutex_unlock(philo->mutexes->write);
 			}
 			pthread_mutex_unlock(philo->mutexes->finish);
-			
-			pthread_mutex_unlock(philo->mutexes->meal);		
+			pthread_mutex_unlock(philo->mutexes->meal);
 			if (print_status(philo, FINISHED))
 				return (1);
 			return (1);
 		}
-		pthread_mutex_unlock(philo->mutexes->meal);		
+		pthread_mutex_unlock(philo->mutexes->meal);
 	}
 	if (busy_sleep(philo, philo->args->time_to_eat))
 		return (1);

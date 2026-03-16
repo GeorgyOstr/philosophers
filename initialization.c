@@ -43,8 +43,8 @@ void	initialize_philos(t_sim_info *sim)
 				sim->philos[i].forks[0] = sim->forks + overflow(i - 1,
 						sim->philos->args->number_of_philos);
 				sim->philos[i].forks[1] = sim->forks + i;
-				sim->philos[i].forks_states[0] = sim->forks_states + overflow(i - 1,
-						sim->philos->args->number_of_philos);
+				sim->philos[i].forks_states[0] = sim->forks_states + overflow(i
+						- 1, sim->philos->args->number_of_philos);
 				sim->philos[i].forks_states[1] = sim->forks_states + i;
 			}
 			else
@@ -52,8 +52,8 @@ void	initialize_philos(t_sim_info *sim)
 				sim->philos[i].forks[1] = sim->forks + overflow(i - 1,
 						sim->philos->args->number_of_philos);
 				sim->philos[i].forks[0] = sim->forks + i;
-				sim->philos[i].forks_states[1] = sim->forks_states + overflow(i - 1,
-						sim->philos->args->number_of_philos);
+				sim->philos[i].forks_states[1] = sim->forks_states + overflow(i
+						- 1, sim->philos->args->number_of_philos);
 				sim->philos[i].forks_states[0] = sim->forks_states + i;
 			}
 		}

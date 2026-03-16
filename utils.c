@@ -84,15 +84,20 @@ int	print_status(t_philo_info *philo, int status)
 		return (1);
 	}
 	if (status == TAKEN_FORK && !(*philo->is_simulation_finished))
-		printf("%ld %d has taken a fork\n", get_time() - *philo->sim_start, philo->philo_num);
+		printf("%ld %d has taken a fork\n", get_time() - *philo->sim_start,
+			philo->philo_num);
 	else if (status == EATING && !(*philo->is_simulation_finished))
-		printf("%ld %d is eating\n", get_time() - *philo->sim_start, philo->philo_num);
+		printf("%ld %d is eating\n", get_time() - *philo->sim_start,
+			philo->philo_num);
 	else if (status == SLEEPING && !(*philo->is_simulation_finished))
-		printf("%ld %d is sleeping\n", get_time() - *philo->sim_start, philo->philo_num);
+		printf("%ld %d is sleeping\n", get_time() - *philo->sim_start,
+			philo->philo_num);
 	else if (status == THINKING && !(*philo->is_simulation_finished))
-		printf("%ld %d is thinking\n", get_time() - *philo->sim_start, philo->philo_num);
+		printf("%ld %d is thinking\n", get_time() - *philo->sim_start,
+			philo->philo_num);
 	else if (status == DIED && philo->is_dead)
-		printf("%ld %d died\n", get_time() - *philo->sim_start, philo->philo_num);
+		printf("%ld %d died\n", get_time() - *philo->sim_start,
+			philo->philo_num);
 	else if (status == FINISHED && *philo->is_simulation_finished
 		&& !*philo->is_someone_died)
 		printf("All philos have eaten at least %d times.\n",

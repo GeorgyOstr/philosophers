@@ -22,14 +22,15 @@ void	start_simulation(t_sim_info *sim)
 int	check_dead(t_philo_info *philo)
 {
 	pthread_mutex_lock(philo->mutexes->finish);
-	if (get_time() - philo->last_ate_time >= philo->args->time_to_die 
+	if (get_time() - philo->last_ate_time >= philo->args->time_to_die
 		|| *philo->is_simulation_finished)
 	{
 		if (!*philo->is_simulation_finished)
 		{
 			*philo->is_simulation_finished = 1;
 			pthread_mutex_lock(philo->mutexes->write);
-			printf("%ld %d died\n", get_time() - *philo->sim_start, philo->philo_num);
+			printf("%ld %d died\n", get_time() - *philo->sim_start,
+				philo->philo_num);
 			pthread_mutex_unlock(philo->mutexes->write);
 		}
 		pthread_mutex_unlock(philo->mutexes->finish);
@@ -38,16 +39,18 @@ int	check_dead(t_philo_info *philo)
 	pthread_mutex_unlock(philo->mutexes->finish);
 	return (0);
 }
+
 int	check_dead_already_locked(t_philo_info *philo)
 {
-	if (get_time() - philo->last_ate_time >= philo->args->time_to_die 
+	if (get_time() - philo->last_ate_time >= philo->args->time_to_die
 		|| *philo->is_simulation_finished)
 	{
 		if (!*philo->is_simulation_finished)
 		{
 			*philo->is_simulation_finished = 1;
 			pthread_mutex_lock(philo->mutexes->write);
-			printf("%ld %d died\n", get_time() - *philo->sim_start, philo->philo_num);
+			printf("%ld %d died\n", get_time() - *philo->sim_start,
+				philo->philo_num);
 			pthread_mutex_unlock(philo->mutexes->write);
 		}
 		return (1);
