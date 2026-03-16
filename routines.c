@@ -51,35 +51,19 @@ int	think_routine(t_philo_info *philo)
 		if (check_dead(philo))
 			return (1);
 	if (print_status(philo, TAKEN_FORK))
-	{
-		release_fork(philo, 0);
-		return (1);
-	}
+		return (release_fork(philo, 0), 1);
 	while (grabbing_fork(philo, 1))
-	{
 		if (check_dead(philo))
-		{
-			release_fork(philo, 0);
-			return (1);
-		}
-	}
+			return (release_fork(philo, 0), 1);
 	if (print_status(philo, TAKEN_FORK))
-	{
-		release_fork(philo, 0);
-		release_fork(philo, 1);
-		return (1);
-	}
+		return (release_fork(philo, 0), release_fork(philo, 1), 1);
 	return (0);
 }
 
 int	eat_routine(t_philo_info *philo)
 {
 	if (print_status(philo, EATING))
-	{
-		release_fork(philo, 1);
-		release_fork(philo, 0);
-		return (1);
-	}
+		return (release_fork(philo, 0), release_fork(philo, 1), 1);
 	philo->eat_count++;
 	philo->last_ate_time = get_time();
 	if (philo->eat_count == philo->args->number_of_eat_to_finish)
@@ -97,21 +81,9 @@ int	eat_routine(t_philo_info *philo)
 		}
 		pthread_mutex_unlock(philo->mutexes->finish);
 	}
-	if (check_dead(philo))
-	{
-		release_fork(philo, 1);
-		release_fork(philo, 0);
-		return (1);
-	}
 	if (busy_sleep(philo, philo->args->time_to_eat))
-	{
-		release_fork(philo, 1);
-		release_fork(philo, 0);
-		return (1);
-	}
-	release_fork(philo, 1);
-	release_fork(philo, 0);
-	return (0);
+		return (release_fork(philo, 0), release_fork(philo, 1), 1);
+	return (release_fork(philo, 0), release_fork(philo, 1), 0);
 }
 
 int	sleep_routine(t_philo_info *philo)

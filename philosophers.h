@@ -79,6 +79,7 @@ typedef struct s_sim_info
 	int				eat_enough_count;
 }					t_sim_info;
 
+void				allocate_all(t_sim_info *sim, t_args *args);
 void				populate_info(t_sim_info *sim, t_args *args);
 void				error_exit(int err_num);
 
@@ -90,14 +91,15 @@ void				start_simulation(t_sim_info *sim);
 int					check_dead(t_philo_info *philo);
 int					check_dead_already_locked(t_philo_info *philo);
 long				get_time(void);
+int					print_status(t_philo_info *philo, int status);
 
 void				create_philo_threads(t_sim_info *philos);
 void				join_threads(t_sim_info *sim);
 
+int					busy_sleep(t_philo_info *philo, int duration);
 int					grabbing_fork(t_philo_info *philo, int num);
 int					release_fork(t_philo_info *philo, int num);
 
-int					busy_sleep(t_philo_info *philo, int duration);
 void				*philo_routine(void *arg);
 int					think_routine(t_philo_info *philo);
 int					eat_routine(t_philo_info *philo);
@@ -108,5 +110,4 @@ long				ft_atoi(char *str);
 void				ft_bzero(void *s, size_t n);
 void				*ft_calloc(size_t count, size_t size);
 
-int					print_status(t_philo_info *philo, int status);
 #endif
