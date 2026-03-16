@@ -67,7 +67,6 @@ typedef struct s_philo_info
 
 typedef struct s_sim_info
 {
-	pthread_t		thread_id;
 	t_philo_info	*philos;
 	pthread_mutex_t	*forks;
 	int				*forks_states;
