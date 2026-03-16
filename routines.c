@@ -12,17 +12,6 @@
 
 #include "philosophers.h"
 
-int	busy_sleep(t_philo_info *philo, int duration)
-{
-	long	start;
-
-	start = get_time();
-	while (get_time() - start < duration)
-		if (check_dead(philo))
-			return (1);
-	return (0);
-}
-
 void	*philo_routine(void *arg)
 {
 	t_philo_info	*philo;
@@ -49,27 +38,6 @@ void	*philo_routine(void *arg)
 	return (arg);
 }
 
-int	grabbing_fork(t_philo_info *philo, int num)
-{
-	pthread_mutex_lock(philo->forks[num]);
-	if (*philo->forks_states[num] == 1)
-	{
-		pthread_mutex_unlock(philo->forks[num]);
-		return (1);
-	}
-	*philo->forks_states[num] = 1;
-	pthread_mutex_unlock(philo->forks[num]);
-	return (0);
-}
-
-int	release_fork(t_philo_info *philo, int num)
-{
-	pthread_mutex_lock(philo->forks[num]);
-	*philo->forks_states[num] = 0;
-	pthread_mutex_unlock(philo->forks[num]);
-	return (0);
-}
-
 int	think_routine(t_philo_info *philo)
 {
 	if (print_status(philo, THINKING))
@@ -83,12 +51,12 @@ int	think_routine(t_philo_info *philo)
 		if (check_dead(philo))
 			return (1);
 	if (print_status(philo, TAKEN_FORK))
-	{	
+	{
 		release_fork(philo, 0);
 		return (1);
 	}
 	while (grabbing_fork(philo, 1))
-	{	
+	{
 		if (check_dead(philo))
 		{
 			release_fork(philo, 0);
@@ -100,7 +68,7 @@ int	think_routine(t_philo_info *philo)
 		release_fork(philo, 0);
 		release_fork(philo, 1);
 		return (1);
-	}	
+	}
 	return (0);
 }
 

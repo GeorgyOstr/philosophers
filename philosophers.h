@@ -15,6 +15,7 @@
 # include <pthread.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <limits.h>
 # include <sys/time.h>
 # include <unistd.h>
 
@@ -104,6 +105,8 @@ int					sleep_routine(t_philo_info *philo);
 
 int					overflow(int i, int n);
 long				ft_atoi(char *str);
+void				ft_bzero(void *s, size_t n);
+void				*ft_calloc(size_t count, size_t size);
 
 int					print_status(t_philo_info *philo, int status);
 #endif

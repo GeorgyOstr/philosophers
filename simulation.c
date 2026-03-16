@@ -65,3 +65,29 @@ long	get_time(void)
 	gettimeofday(&tv, NULL);
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
+
+int	print_status(t_philo_info *philo, int status)
+{
+	pthread_mutex_lock(philo->mutexes->finish);
+	if (check_dead_already_locked(philo))
+	{
+		pthread_mutex_unlock(philo->mutexes->finish);
+		return (1);
+	}
+	pthread_mutex_lock(philo->mutexes->write);
+	if (status == TAKEN_FORK && !(*philo->is_simulation_finished))
+		printf("%ld %d has taken a fork\n", get_time() - *philo->sim_start,
+			philo->philo_num);
+	else if (status == EATING && !(*philo->is_simulation_finished))
+		printf("%ld %d is eating\n", get_time() - *philo->sim_start,
+			philo->philo_num);
+	else if (status == SLEEPING && !(*philo->is_simulation_finished))
+		printf("%ld %d is sleeping\n", get_time() - *philo->sim_start,
+			philo->philo_num);
+	else if (status == THINKING && !(*philo->is_simulation_finished))
+		printf("%ld %d is thinking\n", get_time() - *philo->sim_start,
+			philo->philo_num);
+	pthread_mutex_unlock(philo->mutexes->write);
+	pthread_mutex_unlock(philo->mutexes->finish);
+	return (0);
+}

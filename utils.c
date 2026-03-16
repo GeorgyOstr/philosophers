@@ -12,73 +12,34 @@
 
 #include "philosophers.h"
 
-size_t	ft_strlen(char *s)
+int	busy_sleep(t_philo_info *philo, int duration)
 {
-	int	i;
+	long	start;
 
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
+	start = get_time();
+	while (get_time() - start < duration)
+		if (check_dead(philo))
+			return (1);
+	return (0);
 }
 
-int	overflow(int i, int n)
+int	grabbing_fork(t_philo_info *philo, int num)
 {
-	if (i < 0)
-		return (n - 1);
-	return (i);
-}
-
-long	ft_atoi(char *str)
-{
-	int			i;
-	long		ans;
-	const int	len = ft_strlen(str);
-
-	i = 0;
-	ans = 0;
-	if (len == 20 || len == 0)
-		error_exit(ATOI_ERROR);
-	if (str[i] == '+' || str[i] == '-')
+	pthread_mutex_lock(philo->forks[num]);
+	if (*philo->forks_states[num] == 1)
 	{
-		if (str[i] == '-')
-			error_exit(ATOI_ERROR);
-		i++;
-	}
-	while (str[i] && i < 20)
-	{
-		if ('0' > str[i] || str[i] > '9')
-			error_exit(ATOI_ERROR);
-		ans = 10 * ans + (str[i] - '0');
-		i++;
-	}
-	if (ans <= 0)
-		error_exit(ATOI_ERROR);
-	return (ans);
-}
-
-int	print_status(t_philo_info *philo, int status)
-{
-	pthread_mutex_lock(philo->mutexes->finish);
-	if (check_dead_already_locked(philo))
-	{
-		pthread_mutex_unlock(philo->mutexes->finish);
+		pthread_mutex_unlock(philo->forks[num]);
 		return (1);
 	}
-	pthread_mutex_lock(philo->mutexes->write);
-	if (status == TAKEN_FORK && !(*philo->is_simulation_finished))
-		printf("%ld %d has taken a fork\n", get_time() - *philo->sim_start,
-			philo->philo_num);
-	else if (status == EATING && !(*philo->is_simulation_finished))
-		printf("%ld %d is eating\n", get_time() - *philo->sim_start,
-			philo->philo_num);
-	else if (status == SLEEPING && !(*philo->is_simulation_finished))
-		printf("%ld %d is sleeping\n", get_time() - *philo->sim_start,
-			philo->philo_num);
-	else if (status == THINKING && !(*philo->is_simulation_finished))
-		printf("%ld %d is thinking\n", get_time() - *philo->sim_start,
-			philo->philo_num);
-	pthread_mutex_unlock(philo->mutexes->write);
-	pthread_mutex_unlock(philo->mutexes->finish);
+	*philo->forks_states[num] = 1;
+	pthread_mutex_unlock(philo->forks[num]);
+	return (0);
+}
+
+int	release_fork(t_philo_info *philo, int num)
+{
+	pthread_mutex_lock(philo->forks[num]);
+	*philo->forks_states[num] = 0;
+	pthread_mutex_unlock(philo->forks[num]);
 	return (0);
 }

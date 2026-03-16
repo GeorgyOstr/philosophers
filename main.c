@@ -36,22 +36,27 @@ int	main(int argc, char **argv)
 	return (0);
 }
 
+void	allocate_all(t_sim_info *sim, t_args *args)
+{
+	sim->philos = ft_calloc(args->number_of_philos, sizeof(*sim->philos));
+	if (sim->philos == NULL)
+		error_exit(MALLOC_ERROR);
+	sim->forks = ft_calloc(args->number_of_philos, sizeof(*sim->forks));
+	if (sim->forks == NULL)
+		error_exit(MALLOC_ERROR);
+	sim->forks_states = ft_calloc(args->number_of_philos,
+			sizeof(*sim->forks_states));
+	if (sim->forks_states == NULL)
+		error_exit(MALLOC_ERROR);
+}
+
 void	populate_info(t_sim_info *sim, t_args *args)
 {
 	static int	i = -1;
 
 	sim->is_simulation_finished = 0;
 	sim->eat_enough_count = 0;
-	sim->philos = calloc(args->number_of_philos, sizeof(*sim->philos));
-	if (sim->philos == NULL)
-		error_exit(MALLOC_ERROR);
-	sim->forks = calloc(args->number_of_philos, sizeof(*sim->forks));
-	if (sim->forks == NULL)
-		error_exit(MALLOC_ERROR);
-	sim->forks_states = calloc(args->number_of_philos,
-			sizeof(*sim->forks_states));
-	if (sim->forks_states == NULL)
-		error_exit(MALLOC_ERROR);
+	allocate_all(sim, args);
 	while (++i < args->number_of_philos)
 	{
 		sim->philos[i].args = args;
