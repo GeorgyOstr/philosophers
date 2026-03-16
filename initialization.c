@@ -74,5 +74,6 @@ void	clean_up(t_sim_info *sim)
 		i++;
 	}
 	free(sim->forks);
+	free(sim->forks_states);
 	free(sim->philos);
 }
