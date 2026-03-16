@@ -74,6 +74,11 @@ int	think_routine(t_philo_info *philo)
 {
 	if (print_status(philo, THINKING))
 		return (1);
+	if (philo->philo_num % 2 == 0 && philo->eat_count == 0)
+		usleep(philo->args->time_to_eat * 1000 / 2);
+	else if (philo->eat_count > 1 && philo->args->number_of_philos % 2 == 1)
+		if (busy_sleep(philo, philo->args->time_to_eat / 2))
+			return (1);
 	while (grabbing_fork(philo, 0))
 		if (check_dead(philo))
 			return (1);
@@ -90,36 +95,42 @@ int	think_routine(t_philo_info *philo)
 int	eat_routine(t_philo_info *philo)
 {
 	if (print_status(philo, EATING))
+	{
+		release_fork(philo, 1);
+		release_fork(philo, 0);
 		return (1);
+	}
 	philo->eat_count++;
 	philo->last_ate_time = get_time();
 	if (philo->eat_count == philo->args->number_of_eat_to_finish)
 	{
-		pthread_mutex_lock(philo->mutexes->meal);
+		pthread_mutex_lock(philo->mutexes->finish);
 		*philo->eat_enough_count += 1;
-		if (*philo->eat_enough_count == philo->args->number_of_philos)
+		if (*philo->eat_enough_count == philo->args->number_of_philos
+			&& !*philo->is_simulation_finished)
 		{
-			pthread_mutex_lock(philo->mutexes->finish);
-			if (!*philo->is_simulation_finished)
-			{
-				*philo->is_simulation_finished = 1;
-				pthread_mutex_lock(philo->mutexes->write);
-				printf("All philos have eaten at least %d times.\n",
-					philo->args->number_of_eat_to_finish);
-				pthread_mutex_unlock(philo->mutexes->write);
-			}
-			pthread_mutex_unlock(philo->mutexes->finish);
-			pthread_mutex_unlock(philo->mutexes->meal);
-			if (print_status(philo, FINISHED))
-				return (1);
-			return (1);
+			*philo->is_simulation_finished = 1;
+			pthread_mutex_lock(philo->mutexes->write);
+			printf("All philos have eaten at least %d times.\n",
+				philo->args->number_of_eat_to_finish);
+			pthread_mutex_unlock(philo->mutexes->write);
 		}
-		pthread_mutex_unlock(philo->mutexes->meal);
+		pthread_mutex_unlock(philo->mutexes->finish);
+	}
+	if (check_dead(philo))
+	{
+		release_fork(philo, 1);
+		release_fork(philo, 0);
+		return (1);
 	}
 	if (busy_sleep(philo, philo->args->time_to_eat))
+	{
+		release_fork(philo, 1);
+		release_fork(philo, 0);
 		return (1);
-	release_fork(philo, 0);
+	}
 	release_fork(philo, 1);
+	release_fork(philo, 0);
 	return (0);
 }
 
