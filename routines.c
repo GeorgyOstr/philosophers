@@ -90,7 +90,7 @@ int	eat_routine(t_philo_info *philo)
 		return (1);
 	philo->eat_count++;
 	philo->last_ate_time = get_time();
-	if (philo->eat_count >= philo->args->number_of_eat_to_finish)
+	if (philo->eat_count == philo->args->number_of_eat_to_finish)
 	{
 		pthread_mutex_lock(philo->mutexes->meal);
 		*philo->eat_enough_count += 1;
