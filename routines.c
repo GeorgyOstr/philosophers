@@ -30,9 +30,14 @@ void	*philo_routine(void *arg)
 	philo = arg;
 	if (philo->last_ate_time == 0)
 		philo->last_ate_time = get_time();
-	pthread_mutex_lock(philo->mutexes->finish);
-	while (!*philo->is_simulation_finished)
+	while (1)
 	{
+		pthread_mutex_lock(philo->mutexes->finish);
+		if (*philo->is_simulation_finished)
+		{
+			pthread_mutex_unlock(philo->mutexes->finish);
+			break ;
+		}
 		pthread_mutex_unlock(philo->mutexes->finish);
 		if (think_routine(philo))
 			break ;
@@ -40,9 +45,7 @@ void	*philo_routine(void *arg)
 			break ;
 		if (sleep_routine(philo))
 			break ;
-		pthread_mutex_lock(philo->mutexes->finish);
 	}
-	pthread_mutex_unlock(philo->mutexes->finish);
 	return (arg);
 }
 
