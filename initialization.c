@@ -16,10 +16,8 @@ void	initialize_mutexes(t_sim_info *sim)
 {
 	int	i;
 
-	pthread_mutex_init(&sim->meal, NULL);
 	pthread_mutex_init(&sim->write, NULL);
 	pthread_mutex_init(&sim->finish, NULL);
-	sim->mutexes.meal = &sim->meal;
 	sim->mutexes.write = &sim->write;
 	sim->mutexes.finish = &sim->finish;
 	i = 0;
@@ -64,7 +62,6 @@ void	clean_up(t_sim_info *sim)
 {
 	int	i;
 
-	pthread_mutex_destroy(sim->philos->mutexes->meal);
 	pthread_mutex_destroy(sim->philos->mutexes->write);
 	pthread_mutex_destroy(sim->philos->mutexes->finish);
 	i = 0;

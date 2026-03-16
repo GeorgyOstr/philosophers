@@ -83,12 +83,24 @@ int	think_routine(t_philo_info *philo)
 		if (check_dead(philo))
 			return (1);
 	if (print_status(philo, TAKEN_FORK))
+	{	
+		release_fork(philo, 0);
 		return (1);
+	}
 	while (grabbing_fork(philo, 1))
+	{	
 		if (check_dead(philo))
+		{
+			release_fork(philo, 0);
 			return (1);
+		}
+	}
 	if (print_status(philo, TAKEN_FORK))
+	{
+		release_fork(philo, 0);
+		release_fork(philo, 1);
 		return (1);
+	}	
 	return (0);
 }
 

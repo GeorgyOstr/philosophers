@@ -29,22 +29,6 @@ int	overflow(int i, int n)
 	return (i);
 }
 
-int	min_eat_amount(t_philo_info *philos)
-{
-	int	i;
-	int	min;
-
-	min = philos[0].eat_count;
-	i = 0;
-	while (i < philos[0].args->number_of_philos)
-	{
-		if (philos[i].eat_count < min)
-			min = philos[i].eat_count;
-		i++;
-	}
-	return (min);
-}
-
 long	ft_atoi(char *str)
 {
 	int			i;
@@ -94,13 +78,6 @@ int	print_status(t_philo_info *philo, int status)
 	else if (status == THINKING && !(*philo->is_simulation_finished))
 		printf("%ld %d is thinking\n", get_time() - *philo->sim_start,
 			philo->philo_num);
-	else if (status == DIED && philo->is_dead)
-		printf("%ld %d died\n", get_time() - *philo->sim_start,
-			philo->philo_num);
-	else if (status == FINISHED && *philo->is_simulation_finished
-		&& !*philo->is_someone_died)
-		printf("All philos have eaten at least %d times.\n",
-			philo->args->number_of_eat_to_finish);
 	pthread_mutex_unlock(philo->mutexes->write);
 	pthread_mutex_unlock(philo->mutexes->finish);
 	return (0);

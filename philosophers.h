@@ -45,7 +45,6 @@ typedef struct s_args
 
 typedef struct s_mutexes
 {
-	pthread_mutex_t	*meal;
 	pthread_mutex_t	*write;
 	pthread_mutex_t	*finish;
 }					t_mutexes;
@@ -57,14 +56,12 @@ typedef struct s_philo_info
 	int				*forks_states[2];
 	t_args			*args;
 	t_mutexes		*mutexes;
-	int				*is_someone_died;
 	int				*is_simulation_finished;
 	int				*eat_enough_count;
 	long			*sim_start;
 	long			last_ate_time;
 	int				philo_num;
 	int				eat_count;
-	int				is_dead;
 }					t_philo_info;
 
 typedef struct s_sim_info
@@ -74,10 +71,8 @@ typedef struct s_sim_info
 	pthread_mutex_t	*forks;
 	int				*forks_states;
 	t_mutexes		mutexes;
-	pthread_mutex_t	meal;
 	pthread_mutex_t	write;
 	pthread_mutex_t	finish;
-	int				is_someone_died;
 	int				is_simulation_finished;
 	long			sim_start;
 	int				eat_enough_count;
@@ -96,7 +91,6 @@ int					check_dead_already_locked(t_philo_info *philo);
 long				get_time(void);
 
 void				create_philo_threads(t_sim_info *philos);
-void				create_monitor_thread(t_sim_info *sim);
 void				join_threads(t_sim_info *sim);
 
 int					grabbing_fork(t_philo_info *philo, int num);
@@ -107,10 +101,8 @@ void				*philo_routine(void *arg);
 int					think_routine(t_philo_info *philo);
 int					eat_routine(t_philo_info *philo);
 int					sleep_routine(t_philo_info *philo);
-void				*monitor_routine(void *arg);
 
 int					overflow(int i, int n);
-int					min_eat_amount(t_philo_info *philos);
 long				ft_atoi(char *str);
 
 int					print_status(t_philo_info *philo, int status);
