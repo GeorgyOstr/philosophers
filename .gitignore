@@ -1,3 +1,5 @@
+*.o
+*.d
 a.out
 philosophers
 *.pdf
