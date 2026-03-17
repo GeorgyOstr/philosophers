@@ -48,6 +48,5 @@ Example:
 ## Errors:
 eat_count++ overflow
 get time of day fail
-usleep> 999999 undefined behaviour
 overflow time_to_eat
 save and pass time to print status

@@ -43,7 +43,10 @@ int	think_routine(t_philo_info *philo)
 	if (print_status(philo, THINKING))
 		return (1);
 	if (philo->philo_num % 2 == 0 && philo->eat_count == 0)
-		usleep(philo->args->time_to_eat * 500);
+	{
+		if (busy_sleep(philo, philo->args->time_to_eat / 2))
+			return (1);
+	}
 	else if (philo->eat_count > 1 && philo->args->number_of_philos % 2 == 1)
 		if (busy_sleep(philo, philo->args->time_to_eat / 2))
 			return (1);
