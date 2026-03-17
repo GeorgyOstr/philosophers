@@ -9,6 +9,7 @@ and sleep without starving or causing deadlocks, while respecting timing rules.
 ## Instructions
 Build:
 ```bash
+cd philo
 make
 ```
 
