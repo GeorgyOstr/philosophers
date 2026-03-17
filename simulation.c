@@ -6,7 +6,7 @@
 /*   By: gostroum <gostroum@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/02 01:06:16 by gostroum          #+#    #+#             */
-/*   Updated: 2026/03/02 01:06:19 by gostroum         ###   ########.fr       */
+/*   Updated: 2026/03/17 20:44:54 by gostroum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int	print_status(t_philo_info *philo, int status)
 		printf("%ld %d has taken a fork\n", get_time() - *philo->sim_start,
 			philo->philo_num);
 	else if (status == EATING && !(*philo->is_simulation_finished))
-		printf("%ld %d is eating\n", get_time() - *philo->sim_start,
+		printf("%ld %d is eating\n", philo->last_ate_time - *philo->sim_start,
 			philo->philo_num);
 	else if (status == SLEEPING && !(*philo->is_simulation_finished))
 		printf("%ld %d is sleeping\n", get_time() - *philo->sim_start,

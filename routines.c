@@ -6,7 +6,7 @@
 /*   By: gostroum <gostroum@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/02 00:31:59 by gostroum          #+#    #+#             */
-/*   Updated: 2026/03/02 00:32:00 by gostroum         ###   ########.fr       */
+/*   Updated: 2026/03/17 20:46:43 by gostroum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	think_routine(t_philo_info *philo)
 	if (print_status(philo, THINKING))
 		return (1);
 	if (philo->philo_num % 2 == 0 && philo->eat_count == 0)
-		usleep(philo->args->time_to_eat * 1000 / 2);
+		usleep(philo->args->time_to_eat * 500);
 	else if (philo->eat_count > 1 && philo->args->number_of_philos % 2 == 1)
 		if (busy_sleep(philo, philo->args->time_to_eat / 2))
 			return (1);
@@ -62,10 +62,10 @@ int	think_routine(t_philo_info *philo)
 
 int	eat_routine(t_philo_info *philo)
 {
-	if (print_status(philo, EATING))
-		return (release_fork(philo, 0), release_fork(philo, 1), 1);
 	philo->eat_count++;
 	philo->last_ate_time = get_time();
+	if (print_status(philo, EATING))
+		return (release_fork(philo, 0), release_fork(philo, 1), 1);
 	if (philo->eat_count == philo->args->number_of_eat_to_finish)
 	{
 		pthread_mutex_lock(philo->mutexes->finish);
