@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by gostroum...*
+*This project has been created as part of the 42 curriculum by gostroum.*
 # Philosophers
 
 ## Description
@@ -39,3 +39,6 @@ Example:
   - context analysis, issues bullets list, (toying with fix all, but not using, just dump in ai slop branch for comparison)
   - Drafting a project Makefile
   - Updating README
+
+## Memo:
+- Can't do anything against join fail
