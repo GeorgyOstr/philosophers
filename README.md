@@ -42,14 +42,13 @@ Example:
 
 ## Memo:
 - Can't do anything against join fail
+- Not handling mutex_destroy fail (still locked, probably join also fail or something terrible)
+- All the args assumed to be positive int
 
-## Errors:
-exit cant use
-create philo threads return 
+## Errors: 
 pthread in make not needed
 eat_count++ overflow
 get time of day fail
 usleep> 999999 undefined behaviour
 overflow time_to_eat
 save and pass time to print status
-print should be below last_ate
