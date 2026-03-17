@@ -12,29 +12,44 @@
 
 #include "philosophers.h"
 
-void	create_philo_threads(t_sim_info *sim)
+int	create_philo_threads(t_sim_info *sim)
 {
 	int	i;
+	int	err;
 
 	i = 0;
+	sim->threads_created = 0;
 	while (i < sim->philos->args->number_of_philos)
 	{
-		if (pthread_create(&sim->philos[i].thread_id, NULL, &philo_routine,
-				&sim->philos[i]) != 0)
-			error_exit(THREAD_ERROR);
+		err = pthread_create(&sim->philos[i].thread_id, NULL, &philo_routine,
+				&sim->philos[i]);
+		if (err != 0)
+		{
+			pthread_mutex_lock(sim->philos[i].mutexes->finish);
+			*sim->philos[i].is_simulation_finished = 1;
+			pthread_mutex_unlock(sim->philos[i].mutexes->finish);
+			return (THREAD_ERROR);
+		}
+		sim->threads_created = i + 1;
 		i++;
 	}
+	return (0);
 }
 
-void	join_threads(t_sim_info *sim)
+int	join_threads(t_sim_info *sim)
 {
 	int	i;
+	int	err;
+	int	ret;
 
 	i = 0;
-	while (i < sim->philos->args->number_of_philos)
+	ret = 0;
+	while (i < sim->threads_created)
 	{
-		if (pthread_join(sim->philos[i].thread_id, NULL) != 0)
-			error_exit(THREAD_ERROR_1);
+		err = pthread_join(sim->philos[i].thread_id, NULL);
+		if (err != 0)
+			ret = THREAD_ERROR_1;
 		i++;
 	}
+	return (ret);
 }

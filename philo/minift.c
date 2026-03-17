@@ -58,7 +58,7 @@ int	overflow(int i, int n)
 	return (i);
 }
 
-long	ft_atoi(char *str)
+int	parse_positive_int(char *str, int *out)
 {
 	int			i;
 	long		ans;
@@ -67,21 +67,24 @@ long	ft_atoi(char *str)
 	i = 0;
 	ans = 0;
 	if (len == 20 || len == 0)
-		error_exit(ATOI_ERROR);
+		return (ATOI_ERROR);
 	if (str[i] == '+' || str[i] == '-')
 	{
 		if (str[i] == '-')
-			error_exit(ATOI_ERROR);
+			return (ATOI_ERROR);
 		i++;
 	}
 	while (str[i] && i < 20)
 	{
 		if ('0' > str[i] || str[i] > '9')
-			error_exit(ATOI_ERROR);
+			return (ATOI_ERROR);
 		ans = 10 * ans + (str[i] - '0');
+		if (ans > INT_MAX)
+			return (ATOI_ERROR);
 		i++;
 	}
 	if (ans <= 0)
-		error_exit(ATOI_ERROR);
-	return (ans);
+		return (ATOI_ERROR);
+	*out = (int)ans;
+	return (0);
 }

@@ -76,24 +76,28 @@ typedef struct s_sim_info
 	int				is_simulation_finished;
 	long			sim_start;
 	int				eat_enough_count;
+	int				threads_created;
+	int				forks_mutex_count;
+	int				write_initialized;
+	int				finish_initialized;
 }					t_sim_info;
 
-void				allocate_all(t_sim_info *sim, t_args *args);
-void				populate_info(t_sim_info *sim, t_args *args);
-void				error_exit(int err_num);
+int					allocate_all(t_sim_info *sim, t_args *args);
+int					populate_info(t_sim_info *sim, t_args *args);
+int					report_error(int err_num);
 
-void				initialize_mutexes(t_sim_info *sim);
+int					initialize_mutexes(t_sim_info *sim);
 void				initialize_philos(t_sim_info *sim);
 void				clean_up(t_sim_info *sim);
 
-void				start_simulation(t_sim_info *sim);
+int					start_simulation(t_sim_info *sim);
 int					check_dead(t_philo_info *philo);
 int					check_dead_already_locked(t_philo_info *philo);
 long				get_time(void);
 int					print_status(t_philo_info *philo, int status);
 
-void				create_philo_threads(t_sim_info *philos);
-void				join_threads(t_sim_info *sim);
+int					create_philo_threads(t_sim_info *philos);
+int					join_threads(t_sim_info *sim);
 
 int					busy_sleep(t_philo_info *philo, int duration);
 int					grabbing_fork(t_philo_info *philo, int num);
@@ -105,7 +109,7 @@ int					eat_routine(t_philo_info *philo);
 int					sleep_routine(t_philo_info *philo);
 
 int					overflow(int i, int n);
-long				ft_atoi(char *str);
+int					parse_positive_int(char *str, int *out);
 void				ft_bzero(void *s, size_t n);
 void				*ft_calloc(size_t count, size_t size);
 

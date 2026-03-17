@@ -12,21 +12,32 @@
 
 #include "philosophers.h"
 
-void	initialize_mutexes(t_sim_info *sim)
+int	initialize_mutexes(t_sim_info *sim)
 {
 	int	i;
+	int	err;
 
-	pthread_mutex_init(&sim->write, NULL);
-	pthread_mutex_init(&sim->finish, NULL);
+	err = pthread_mutex_init(&sim->write, NULL);
+	if (err != 0)
+		return (THREAD_ERROR);
+	sim->write_initialized = 1;
+	err = pthread_mutex_init(&sim->finish, NULL);
+	if (err != 0)
+		return (THREAD_ERROR);
+	sim->finish_initialized = 1;
 	sim->mutexes.write = &sim->write;
 	sim->mutexes.finish = &sim->finish;
 	i = 0;
 	while (i < sim->philos->args->number_of_philos)
 	{
-		pthread_mutex_init(sim->forks + i, NULL);
+		err = pthread_mutex_init(sim->forks + i, NULL);
+		if (err != 0)
+			return (THREAD_ERROR);
+		sim->forks_mutex_count = i + 1;
 		sim->philos[i].mutexes = &sim->mutexes;
 		i++;
 	}
+	return (0);
 }
 
 void	initialize_philos(t_sim_info *sim)
@@ -62,15 +73,28 @@ void	clean_up(t_sim_info *sim)
 {
 	int	i;
 
-	pthread_mutex_destroy(sim->philos->mutexes->write);
-	pthread_mutex_destroy(sim->philos->mutexes->finish);
 	i = 0;
-	while (i < sim->philos->args->number_of_philos)
+	while (i < sim->forks_mutex_count)
 	{
 		pthread_mutex_destroy(sim->forks + i);
 		i++;
 	}
+	if (sim->write_initialized)
+		pthread_mutex_destroy(&sim->write);
+	if (sim->finish_initialized)
+		pthread_mutex_destroy(&sim->finish);
 	free(sim->forks);
 	free(sim->forks_states);
 	free(sim->philos);
+}
+
+int	report_error(int err_num)
+{
+	char	c;
+
+	c = '0' + err_num;
+	write(2, "Error ", 6);
+	write(2, &c, 1);
+	write(2, "\n", 1);
+	return (err_num);
 }

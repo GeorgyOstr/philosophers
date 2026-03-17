@@ -12,11 +12,17 @@
 
 #include "philosophers.h"
 
-void	start_simulation(t_sim_info *sim)
+int	start_simulation(t_sim_info *sim)
 {
-	create_philo_threads(sim);
-	join_threads(sim);
-	clean_up(sim);
+	int	err;
+
+	err = create_philo_threads(sim);
+	if (err)
+	{
+		join_threads(sim);
+		return (err);
+	}
+	return (join_threads(sim));
 }
 
 int	check_dead(t_philo_info *philo)
