@@ -45,8 +45,7 @@ Example:
 - Not handling mutex_destroy fail (still locked, probably join also fail or something terrible)
 - All the args assumed to be positive int
 
-## Errors: 
-pthread in make not needed
+## Errors:
 eat_count++ overflow
 get time of day fail
 usleep> 999999 undefined behaviour
