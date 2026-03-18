@@ -6,7 +6,7 @@
 /*   By: gostroum <gostroum@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/02 00:31:59 by gostroum          #+#    #+#             */
-/*   Updated: 2026/03/17 20:46:43 by gostroum         ###   ########.fr       */
+/*   Updated: 2026/03/18 20:09:59 by gostroum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,6 @@ int	think_routine(t_philo_info *philo)
 
 int	eat_routine(t_philo_info *philo)
 {
-	philo->eat_count++;
-	philo->last_ate_time = get_time();
 	if (print_status(philo, EATING))
 		return (release_fork(philo, 0), release_fork(philo, 1), 1);
 	if (philo->eat_count == philo->args->number_of_eat_to_finish)

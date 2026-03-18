@@ -6,7 +6,7 @@
 /*   By: gostroum <gostroum@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 19:49:24 by gostroum          #+#    #+#             */
-/*   Updated: 2026/03/06 19:49:26 by gostroum         ###   ########.fr       */
+/*   Updated: 2026/03/18 20:19:36 by gostroum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,9 @@ int	initialize_mutexes(t_sim_info *sim)
 
 void	initialize_philos(t_sim_info *sim)
 {
-	static int	i = -1;
+	int	i;
 
+	i = -1;
 	while (++i < sim->philos->args->number_of_philos)
 	{
 		{
@@ -55,16 +56,14 @@ void	initialize_philos(t_sim_info *sim)
 				sim->philos[i].forks_states[0] = sim->forks_states + overflow(i
 						- 1, sim->philos->args->number_of_philos);
 				sim->philos[i].forks_states[1] = sim->forks_states + i;
+				continue ;
 			}
-			else
-			{
-				sim->philos[i].forks[1] = sim->forks + overflow(i - 1,
-						sim->philos->args->number_of_philos);
-				sim->philos[i].forks[0] = sim->forks + i;
-				sim->philos[i].forks_states[1] = sim->forks_states + overflow(i
-						- 1, sim->philos->args->number_of_philos);
-				sim->philos[i].forks_states[0] = sim->forks_states + i;
-			}
+			sim->philos[i].forks[1] = sim->forks + overflow(i - 1,
+					sim->philos->args->number_of_philos);
+			sim->philos[i].forks[0] = sim->forks + i;
+			sim->philos[i].forks_states[1] = sim->forks_states + overflow(i
+					- 1, sim->philos->args->number_of_philos);
+			sim->philos[i].forks_states[0] = sim->forks_states + i;
 		}
 	}
 }
@@ -92,7 +91,7 @@ int	report_error(int err_num)
 {
 	char	c;
 
-	c = '0' + err_num;
+	c = '0' + (char)err_num;
 	write(2, "Error ", 6);
 	write(2, &c, 1);
 	write(2, "\n", 1);
