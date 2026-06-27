@@ -98,13 +98,7 @@ int	eat_routine(t_philo_info *philo)
 		*philo->eat_enough_count += 1;
 		if (*philo->eat_enough_count == philo->args->number_of_philos
 			&& !*philo->is_simulation_finished)
-		{
 			*philo->is_simulation_finished = 1;
-			pthread_mutex_lock(philo->mutexes->write);
-			printf("All philos have eaten at least %d times.\n",
-				philo->args->number_of_eat_to_finish);
-			pthread_mutex_unlock(philo->mutexes->write);
-		}
 		pthread_mutex_unlock(philo->mutexes->finish);
 	}
 	if (busy_sleep(philo, philo->args->time_to_eat))
