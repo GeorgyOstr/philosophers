@@ -17,6 +17,8 @@ void	*philo_routine(void *arg)
 	t_philo_info	*philo;
 
 	philo = arg;
+	while (get_time() <= *philo->sim_start + philo->args->number_of_philos)
+		;
 	if (philo->last_ate_time == 0)
 		philo->last_ate_time = get_time();
 	while (1)
