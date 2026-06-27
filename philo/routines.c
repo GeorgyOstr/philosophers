@@ -38,6 +38,27 @@ void	*philo_routine(void *arg)
 	return (arg);
 }
 
+static int	odd_sleep(t_philo_info *philo)
+{
+	int	val;
+
+	val = 0;
+	if (philo->args->time_to_eat >= philo->args->time_to_sleep)
+		val = philo->args->time_to_eat - philo->args->time_to_sleep / 2;
+	if (philo->philo_num == philo->args->number_of_philos
+		&& philo->eat_count == 0)
+	{
+		if (busy_sleep(philo, 3 * philo->args->time_to_eat / 2))
+			return (1);
+	}
+	if (philo->eat_count > 0 && val != 0)
+	{
+		if (busy_sleep(philo, val))
+			return (1);
+	}
+	return (0);
+}
+
 int	think_routine(t_philo_info *philo)
 {
 	if (print_status(philo, THINKING))
@@ -47,9 +68,11 @@ int	think_routine(t_philo_info *philo)
 		if (busy_sleep(philo, philo->args->time_to_eat / 2))
 			return (1);
 	}
-	else if (philo->eat_count > 1 && philo->args->number_of_philos % 2 == 1)
-		if (busy_sleep(philo, philo->args->time_to_eat / 2))
+	if (philo->args->number_of_philos % 2 == 1)
+	{
+		if (odd_sleep(philo))
 			return (1);
+	}
 	while (grabbing_fork(philo, 0))
 		if (check_dead(philo))
 			return (1);
