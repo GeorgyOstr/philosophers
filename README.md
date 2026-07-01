@@ -1,6 +1,4 @@
 *This project has been created as part of the 42 curriculum by gostroum.*
-# Philosophers
-
 ## Description
 This project implements the classic Dining Philosophers concurrency problem.
 The goal is to synchronize multiple philosopher threads so they can think, eat,
@@ -25,13 +23,10 @@ Example:
 
 ## Resources
 - The Dining Philosophers Problem (Wiki)
-- pthreads documentation
+- pthreads documentation and other linux man pages
 - 42 School "philosophers" subject PDF
 - Github (various approaches, tests)
 - Leetcode (another approach)
-
-## Tools
-- Valgrind - nice tool for debug (helpfull options: --leak-check=full --fair-sched=yes --tool=helgrind)
 
 ## AI usage:
 - Copilot autocomplete - (quick code rewriting)
