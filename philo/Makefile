@@ -6,14 +6,14 @@
 #    By: gostroum <gostroum@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/16 23:27:59 by gostroum          #+#    #+#              #
-#    Updated: 2026/06/26 23:23:44 by gostroum         ###   ########.fr        #
+#    Updated: 2026/07/05 19:08:21 by gostroum         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := philo
 
 CC := cc
-CFLAGS := -Wall -Wextra -Werror 
+CFLAGS := -Wall -Wextra -Werror
 SRCS := main.c \
 	initialization.c \
 	simulation.c \
